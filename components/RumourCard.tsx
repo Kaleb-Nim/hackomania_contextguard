@@ -94,6 +94,7 @@ export default function RumourCard({
           {/* Counter-narrative */}
           <CounterNarrativeDisplay
             counterNarratives={prediction.counterNarratives}
+            sources={prediction.sources}
             policyRecommendations={prediction.policyRecommendations}
             selectedLanguage={language}
             onLanguageChange={setLanguage}

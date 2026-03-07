@@ -6,6 +6,7 @@ import LanguageToggle from "./LanguageToggle";
 
 interface CounterNarrativeDisplayProps {
   counterNarratives: Record<Language, string>;
+  sources?: { label: string; url: string }[];
   policyRecommendations?: string[];
   selectedLanguage: Language;
   onLanguageChange: (lang: Language) => void;
@@ -13,6 +14,7 @@ interface CounterNarrativeDisplayProps {
 
 export default function CounterNarrativeDisplay({
   counterNarratives,
+  sources,
   policyRecommendations,
   selectedLanguage,
   onLanguageChange,
@@ -48,6 +50,30 @@ export default function CounterNarrativeDisplay({
         <div className="mt-3">
           <CopyButton text={text} />
         </div>
+
+        {/* Sources */}
+        {sources && sources.length > 0 && (
+          <div
+            className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 border-t pt-3"
+            style={{ borderColor: "rgba(34,197,94,0.12)" }}
+          >
+            <span className="font-mono text-[9px] font-bold tracking-[0.08em] uppercase text-text-muted">
+              Sources:
+            </span>
+            {sources.map((source, i) => (
+              <a
+                key={i}
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[10px] text-accent-green no-underline transition-opacity hover:opacity-80"
+                style={{ textDecoration: "underline", textUnderlineOffset: 2 }}
+              >
+                {source.label}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Policy Recommendations */}
