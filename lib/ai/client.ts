@@ -1,5 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+export const genAI = new GoogleGenerativeAI(
+  process.env.GEMINI_API_KEY ?? ""
+);
