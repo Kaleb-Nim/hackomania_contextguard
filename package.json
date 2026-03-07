@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "bunx playwright test"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@mendable/firecrawl-js": "^4.15.4",
     "jspdf": "^4.2.0",
     "next": "16.1.6",
     "pdfjs-dist": "^5.5.207",
@@ -17,6 +20,7 @@
     "react-pdf": "^10.4.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
