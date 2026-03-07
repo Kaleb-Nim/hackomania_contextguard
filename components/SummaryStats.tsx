@@ -1,14 +1,28 @@
-const stats = [
-  {
-    label: "Predicted Rumours",
-    value: "4",
-    sub: "across 4 language communities",
-  },
-  { label: "Highest Risk", value: "94%", sub: "supply scarcity panic" },
-  { label: "Time Advantage", value: "6-8h", sub: "before viral spread" },
-];
+interface SummaryStatsProps {
+  predictionsCount: number;
+  highestRiskScore: number;
+  highestRiskSub: string;
+}
 
-export default function SummaryStats() {
+export default function SummaryStats({
+  predictionsCount,
+  highestRiskScore,
+  highestRiskSub,
+}: SummaryStatsProps) {
+  const stats = [
+    {
+      label: "Predicted Rumours",
+      value: String(predictionsCount),
+      sub: `across ${predictionsCount} language communities`,
+    },
+    {
+      label: "Highest Risk",
+      value: `${Math.round(highestRiskScore)}%`,
+      sub: highestRiskSub,
+    },
+    { label: "Time Advantage", value: "6-8h", sub: "before viral spread" },
+  ];
+
   return (
     <div className="grid grid-cols-3 gap-3">
       {stats.map((stat, i) => (
