@@ -1,5 +1,12 @@
 import FirecrawlApp from "@mendable/firecrawl-js";
 
-export const firecrawl = new FirecrawlApp({
-  apiKey: process.env.FIRECRAWL_API_KEY ?? "",
-});
+let _instance: FirecrawlApp | null = null;
+
+export function getFirecrawl(): FirecrawlApp {
+  if (!_instance) {
+    _instance = new FirecrawlApp({
+      apiKey: process.env.FIRECRAWL_API_KEY ?? "",
+    });
+  }
+  return _instance;
+}

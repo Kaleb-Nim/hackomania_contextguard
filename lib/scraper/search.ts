@@ -1,4 +1,4 @@
-import { firecrawl } from "./firecrawl-client";
+import { getFirecrawl } from "./firecrawl-client";
 import type { ScrapedSource } from "../types";
 
 const DOMAINS = [
@@ -40,7 +40,7 @@ export async function searchHistoricalSources(
 
 async function searchSingle(query: string): Promise<ScrapedSource[]> {
   try {
-    const result = await firecrawl.search(query, { limit: 3 });
+    const result = await getFirecrawl().search(query, { limit: 3 });
 
     if (!result || !result.web || result.web.length === 0) return [];
 
