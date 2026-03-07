@@ -2,7 +2,7 @@ import type { RiskLevel } from "@/data/demo-scenario";
 
 interface RiskBadgeProps {
   risk: RiskLevel;
-  score: number;
+  score?: number;
 }
 
 const styles: Record<
@@ -48,7 +48,7 @@ export default function RiskBadge({ risk, score }: RiskBadgeProps) {
         boxShadow: s.glow,
       }}
     >
-      {risk} &mdash; {score}%
+      {risk}{score !== undefined && <>&nbsp;&mdash; {score}%</>}
     </span>
   );
 }

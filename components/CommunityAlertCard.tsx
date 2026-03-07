@@ -21,15 +21,17 @@ export default function CommunityAlertCard({
 
   return (
     <div
+      className="rumour-card"
       style={{
         background: "rgba(255,255,255,0.03)",
         border: "1px solid rgba(255,255,255,0.06)",
         borderRadius: 10,
         padding: "20px 22px",
+        transition: "all 0.3s ease",
       }}
     >
       <div className="mb-3 flex items-start justify-between">
-        <RiskBadge risk={prediction.risk} score={prediction.riskScore} />
+        <RiskBadge risk={prediction.risk} />
         <span className="font-mono text-[11px] text-text-muted">
           {receivedTime}
         </span>
@@ -48,6 +50,7 @@ export default function CommunityAlertCard({
 
       <CounterNarrativeDisplay
         counterNarratives={prediction.counterNarratives}
+        policyRecommendations={prediction.policyRecommendations}
         selectedLanguage={language}
         onLanguageChange={setLanguage}
       />

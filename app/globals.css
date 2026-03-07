@@ -83,3 +83,10 @@ textarea:focus {
   border-color: rgba(239, 68, 68, 0.3) !important;
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.08);
 }
+
+.rumour-card:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}

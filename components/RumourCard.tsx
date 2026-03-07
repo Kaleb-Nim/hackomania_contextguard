@@ -20,6 +20,7 @@ export default function RumourCard({
 
   return (
     <div
+      className="rumour-card"
       style={{
         background: isExpanded
           ? "rgba(255,255,255,0.05)"
@@ -40,11 +41,8 @@ export default function RumourCard({
           {isExpanded ? "\u25BE" : "\u25B8"}
         </div>
         <div className="flex-1">
-          <div className="mb-2 flex flex-wrap items-center gap-2.5">
-            <RiskBadge risk={prediction.risk} score={prediction.riskScore} />
-            <span className="font-mono text-[10px] text-text-muted">
-              est. spread: {prediction.timeToSpread}
-            </span>
+          <div className="mb-2">
+            <RiskBadge risk={prediction.risk} />
           </div>
           <h3 className="m-0 text-[15px] font-bold leading-[1.4] text-text-primary">
             &ldquo;{prediction.title}&rdquo;
@@ -96,6 +94,7 @@ export default function RumourCard({
           {/* Counter-narrative */}
           <CounterNarrativeDisplay
             counterNarratives={prediction.counterNarratives}
+            policyRecommendations={prediction.policyRecommendations}
             selectedLanguage={language}
             onLanguageChange={setLanguage}
           />
