@@ -18,6 +18,27 @@ export default function ActionPanel({
   const [isErrorToast, setIsErrorToast] = useState(false);
   const [telegramId, setTelegramId] = useState("");
   const [isDeploying, setIsDeploying] = useState(false);
+  const [telegramMemberCount, setTelegramMemberCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Fetch Telegram member count automatically
+    const fetchMemberCount = async () => {
+      try {
+        const res = await fetch('/api/telegram?action=count', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ chatId: "@LIMIT_TEST_HACKOMAINA", message: "count_only" })
+        });
+        const data = await res.json();
+        if (data.memberCount) {
+          setTelegramMemberCount(data.memberCount);
+        }
+      } catch (e) {
+        console.error("Failed to fetch initial member count", e);
+      }
+    };
+    fetchMemberCount();
+  }, []);
 
   useEffect(() => {
     if (showToast) {
@@ -30,6 +51,7 @@ export default function ActionPanel({
     setIsDeploying(true);
     let hasError = false;
     let errorMessage = "";
+    let memberCountStr = "";
     
     try {
       const counterNarrativesText = DEMO_SCENARIO.predictions.map(p => 
@@ -59,6 +81,9 @@ export default function ActionPanel({
          hasError = true;
          errorMessage = data.error || "Failed to send message";
          console.error("Telegram API Error:", data.error);
+      } else {
+         memberCountStr = data.memberCount ? ` and ${data.memberCount} Telegram users` : " and Telegram";
+         if (data.memberCount) setTelegramMemberCount(data.memberCount);
       }
     } catch (error: any) {
       hasError = true;
@@ -72,7 +97,7 @@ export default function ActionPanel({
          setToastMessage(`Error: ${errorMessage}`);
          setIsErrorToast(true);
       } else {
-         setToastMessage(`\u2713 Counter-narratives deployed to ${communityLeadersCount} community leaders and Telegram`);
+         setToastMessage(`\u2713 Counter-narratives deployed to ${communityLeadersCount} community leaders${memberCountStr}`);
          setIsErrorToast(false);
       }
       
@@ -97,8 +122,8 @@ export default function ActionPanel({
             Deploy to Community Network
           </div>
           <div className="mt-0.5 text-[12px] text-text-tertiary">
-            Push counter-narratives to {communityLeadersCount} verified
-            community leaders across {constituencies} constituencies
+            Push counter-narratives to {telegramMemberCount !== null ? telegramMemberCount : communityLeadersCount} verified
+            users across {constituencies} constituencies
           </div>
         </div>
         <button
@@ -134,7 +159,7 @@ export default function ActionPanel({
             <p className="mb-6 text-[13px] text-text-secondary">
               Counter-narratives will be sent to{" "}
               <span className="font-semibold text-text-primary">
-                {communityLeadersCount} verified community leaders
+                {telegramMemberCount !== null ? telegramMemberCount : communityLeadersCount} verified community leaders
               </span>{" "}
               across {constituencies} constituencies in 4 languages.
             </p>
