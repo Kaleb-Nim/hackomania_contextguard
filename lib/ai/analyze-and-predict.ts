@@ -21,11 +21,11 @@ export async function analyzeAndPredict(
   const sourcesContext =
     sources.length > 0
       ? sources
-          .map(
-            (s, i) =>
-              `[Source ${i + 1}] ${s.title}\nURL: ${s.url}\nDomain: ${s.domain}\n${s.content}\n`
-          )
-          .join("\n---\n")
+        .map(
+          (s, i) =>
+            `[Source ${i + 1}] ${s.title}\nURL: ${s.url}\nDomain: ${s.domain}\n${s.content}\n`
+        )
+        .join("\n---\n")
       : "No historical sources were retrieved. Use your knowledge of Singapore's misinformation landscape to generate predictions.";
 
   const model = genAI.getGenerativeModel({

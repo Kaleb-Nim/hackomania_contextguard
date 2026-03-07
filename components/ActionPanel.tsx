@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { DEMO_SCENARIO } from "@/data/demo-scenario";
+import { type RumourPrediction } from "@/data/demo-scenario";
 
 interface ActionPanelProps {
   communityLeadersCount: number;
   constituencies: number;
+  predictions: RumourPrediction[];
 }
 
 export default function ActionPanel({
   communityLeadersCount,
   constituencies,
+  predictions,
 }: ActionPanelProps) {
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -54,7 +56,7 @@ export default function ActionPanel({
     let memberCountStr = "";
 
     try {
-      const counterNarrativesText = DEMO_SCENARIO.predictions.map(p =>
+      const counterNarrativesText = predictions.map(p =>
         `🚨 ${p.title}\n` +
         `EN: ${p.counterNarratives.en}\n\n` +
         `ZH: ${p.counterNarratives.zh}\n\n` +

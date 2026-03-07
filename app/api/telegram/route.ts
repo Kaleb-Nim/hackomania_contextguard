@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     }
 
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    
+
     if (!botToken) {
       console.error("TELEGRAM_BOT_TOKEN is not set in environment variables.");
       return NextResponse.json({ error: 'TELEGRAM_BOT_TOKEN is missing. Please add it to your .env.local file and restart the server.' }, { status: 400 });
@@ -22,48 +22,59 @@ export async function POST(req: Request) {
       if (countRes.ok) {
         const countData = await countRes.json();
         if (countData.ok) {
-           let totalCount = countData.result;
-           
-           // In Telegram Channels, all bots must be administrators, so we can count them
-           let botCount = 0;
-           const adminRes = await fetch(`https://api.telegram.org/bot${botToken}/getChatAdministrators?chat_id=${chatId}`);
-           if (adminRes.ok) {
-             const adminData = await adminRes.json();
-             if (adminData.ok) {
-               botCount = adminData.result.filter((admin: any) => admin.user.is_bot).length;
-             }
-           }
-           
-           memberCount = totalCount - botCount;
+          let totalCount = countData.result;
+
+          // In Telegram Channels, all bots must be administrators, so we can count them
+          let botCount = 0;
+          const adminRes = await fetch(`https://api.telegram.org/bot${botToken}/getChatAdministrators?chat_id=${chatId}`);
+          if (adminRes.ok) {
+            const adminData = await adminRes.json();
+            if (adminData.ok) {
+              botCount = adminData.result.filter((admin: any) => admin.user.is_bot).length;
+            }
+          }
+
+          memberCount = totalCount - botCount;
         }
       }
     } catch (e) {
       console.error("Failed to fetch member count", e);
     }
-    
+
     // If the message is a special internal flag just to fetch the count, return early
     if (message === "count_only") {
       return NextResponse.json({ success: true, memberCount });
     }
 
-    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-      }),
-    });
+    // Split message into chunks if it's too long (Telegram limit is 4096)
+    const MAX_LENGTH = 4000;
+    const messageChunks = [];
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      return NextResponse.json({ error: data.description || 'Failed to send message' }, { status: response.status });
+    for (let i = 0; i < message.length; i += MAX_LENGTH) {
+      messageChunks.push(message.substring(i, i + MAX_LENGTH));
     }
 
-    return NextResponse.json({ success: true, data, memberCount });
+    let lastResult = null;
+    for (const chunk of messageChunks) {
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: chunk,
+        }),
+      });
+
+      lastResult = await response.json();
+
+      if (!response.ok) {
+        return NextResponse.json({ error: lastResult.description || 'Failed to send message' }, { status: response.status });
+      }
+    }
+
+    return NextResponse.json({ success: true, data: lastResult, memberCount });
   } catch (error) {
     console.error('Telegram API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

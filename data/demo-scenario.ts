@@ -64,26 +64,34 @@ export const DEMO_SOURCES: { label: string; url: string }[] = (() => {
   const seen = new Set<string>();
   const sources: { label: string; url: string }[] = [];
   for (const p of [
-    { sources: [
-      { label: "Gov.sg — No need to panic buy", url: "https://www.gov.sg/article/no-need-to-panic-buy-singapore-has-sufficient-supply-of-food-and-essential-items" },
-      { label: "SFA — Food Supply Assurance", url: "https://www.sfa.gov.sg/food-farming/singapore-food-supply/food-supply-sources" },
-      { label: "CNA — Supermarkets restock shelves", url: "https://www.channelnewsasia.com/singapore/covid-19-supermarkets-restock-shelves-panic-buying-dorscon-orange-941711" },
-    ]},
-    { sources: [
-      { label: "MOH — COVID-19 Situation Update", url: "https://www.moh.gov.sg/covid-19" },
-      { label: "MOH — Daily Case Reports", url: "https://www.moh.gov.sg/covid-19/past-updates" },
-      { label: "WHO — Singapore Transparency Commendation", url: "https://www.who.int/singapore" },
-    ]},
-    { sources: [
-      { label: "MOH — COVID-19 Situation Report", url: "https://www.moh.gov.sg/covid-19" },
-      { label: "MOM — Advisory on Migrant Workers", url: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
-      { label: "POFMA Office — Correction Directions", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
-    ]},
-    { sources: [
-      { label: "MOH — Official Medical Guidance", url: "https://www.moh.gov.sg/covid-19/vaccination" },
-      { label: "HSA — Safety Alerts on Unproven Remedies", url: "https://www.hsa.gov.sg/consumer-safety/articles/covid19_unproven_claims" },
-      { label: "POFMA — Correction on False Cure Claims", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
-    ]},
+    {
+      sources: [
+        { label: "Gov.sg — No need to panic buy", url: "https://www.gov.sg/article/no-need-to-panic-buy-singapore-has-sufficient-supply-of-food-and-essential-items" },
+        { label: "SFA — Food Supply Assurance", url: "https://www.sfa.gov.sg/food-farming/singapore-food-supply/food-supply-sources" },
+        { label: "CNA — Supermarkets restock shelves", url: "https://www.channelnewsasia.com/singapore/covid-19-supermarkets-restock-shelves-panic-buying-dorscon-orange-941711" },
+      ]
+    },
+    {
+      sources: [
+        { label: "MOH — COVID-19 Situation Update", url: "https://www.moh.gov.sg/covid-19" },
+        { label: "MOH — Daily Case Reports", url: "https://www.moh.gov.sg/covid-19/past-updates" },
+        { label: "WHO — Singapore Transparency Commendation", url: "https://www.who.int/singapore" },
+      ]
+    },
+    {
+      sources: [
+        { label: "MOH — COVID-19 Situation Report", url: "https://www.moh.gov.sg/covid-19" },
+        { label: "MOM — Advisory on Migrant Workers", url: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
+        { label: "POFMA Office — Correction Directions", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
+      ]
+    },
+    {
+      sources: [
+        { label: "MOH — Official Medical Guidance", url: "https://www.moh.gov.sg/covid-19/vaccination" },
+        { label: "HSA — Safety Alerts on Unproven Remedies", url: "https://www.hsa.gov.sg/consumer-safety/articles/covid19_unproven_claims" },
+        { label: "POFMA — Correction on False Cure Claims", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
+      ]
+    },
   ]) {
     for (const s of p.sources) {
       if (!seen.has(s.url)) {

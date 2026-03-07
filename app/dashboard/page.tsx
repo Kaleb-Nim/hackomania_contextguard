@@ -226,18 +226,6 @@ export default function DashboardPage() {
             <div className="mb-7">
               <SummaryStats
                 predictionsCount={predictions.length}
-                highestRiskScore={
-                  predictions.length > 0
-                    ? Math.max(...predictions.map((p) => p.riskScore))
-                    : 0
-                }
-                highestRiskSub={
-                  predictions.length > 0
-                    ? predictions.reduce((a, b) =>
-                        a.riskScore > b.riskScore ? a : b
-                      ).trigger
-                    : ""
-                }
               />
             </div>
 
@@ -309,6 +297,7 @@ export default function DashboardPage() {
               <ActionPanel
                 communityLeadersCount={communityLeadersCount}
                 constituencies={constituencies}
+                predictions={predictions}
               />
             </div>
 

@@ -16,29 +16,35 @@ export async function searchHistoricalSources(
 ): Promise<ScrapedSource[]> {
   const sources: ScrapedSource[] = [];
   const seenUrls = new Set<string>();
+  let stopSearch = false;
 
-  const allPromises: Promise<ScrapedSource[]>[] = [];
+  const allPromises = [];
   for (const query of queries) {
     for (const domain of DOMAINS) {
-      allPromises.push(searchSingle(`${query} ${domain}`));
+      if (stopSearch) break;
+      const p = searchSingle(`${query} ${domain}`).then((result) => {
+        if (stopSearch) return [];
+        for (const source of result) {
+          if (seenUrls.has(source.url)) continue;
+          seenUrls.add(source.url);
+          sources.push(source);
+          onSource?.(source);
+          if (sources.length >= MAX_TOTAL_SOURCES) {
+            stopSearch = true;
+            break;
+          }
+        }
+        return result;
+      }).catch((err) => {
+        console.error("Search single error:", err);
+        return [];
+      });
+      allPromises.push(p);
     }
   }
 
-  // Process each search as it resolves to stream sources in real time
-  const pending = allPromises.map((p, i) =>
-    p.then((result) => ({ index: i, result })).catch(() => ({ index: i, result: [] as ScrapedSource[] }))
-  );
-
-  for (const promise of pending) {
-    const { result } = await promise;
-    for (const source of result) {
-      if (seenUrls.has(source.url)) continue;
-      seenUrls.add(source.url);
-      sources.push(source);
-      onSource?.(source);
-      if (sources.length >= MAX_TOTAL_SOURCES) return sources;
-    }
-  }
+  // Wait for all initiated searches to complete
+  await Promise.allSettled(allPromises);
 
   return sources;
 }
