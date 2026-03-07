@@ -1,13 +1,13 @@
 interface SummaryStatsProps {
-  predictionsCount: number;
-  highestRiskScore: number;
-  highestRiskSub: string;
+  predictionsCount?: number;
+  highestRiskScore?: number;
+  highestRiskSub?: string;
 }
 
 export default function SummaryStats({
-  predictionsCount,
-  highestRiskScore,
-  highestRiskSub,
+  predictionsCount = 4,
+  highestRiskScore = 94,
+  highestRiskSub = "supply scarcity panic",
 }: SummaryStatsProps) {
   const stats = [
     {
