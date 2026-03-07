@@ -1,5 +1,5 @@
 import { extractTopics } from "@/lib/ai/extract-topics";
-import { searchHistoricalSources } from "@/lib/scraper/search";
+import { searchHistoricalSources, searchClickHouseRAG } from "@/lib/scraper/search";
 import { analyzeAndPredict } from "@/lib/ai/analyze-and-predict";
 import { DEMO_SCENARIO, DEMO_SOURCES } from "@/data/demo-scenario";
 import type { AnalyzeResponse } from "@/lib/types";
@@ -32,33 +32,52 @@ export async function POST(request: Request) {
         const topics = await extractTopics(text);
         send("step", { id: "topics", status: "done" });
 
-        // Step 2: Search sources — stream each as found
+        // Step 2: Search sources — Firecrawl + ClickHouse RAG in parallel
         send("step", { id: "sources", status: "running" });
-        const sources = await searchHistoricalSources(topics.searchQueries, (source) => {
-          send("source", { label: source.title, url: source.url, domain: source.domain });
+
+        const seenUrls = new Set<string>();
+        const onSource = (source: { title: string; url: string; domain: string }) => {
+          if (!seenUrls.has(source.url)) {
+            seenUrls.add(source.url);
+            send("source", { label: source.title, url: source.url, domain: source.domain });
+          }
+        };
+
+        const [firecrawlSources, ragSources] = await Promise.all([
+          searchHistoricalSources(topics.searchQueries, onSource),
+          searchClickHouseRAG(text, topics.topics, onSource),
+        ]);
+
+        // Deduplicate Firecrawl sources (RAG sources stay separate for the LLM)
+        const mergedUrls = new Set<string>(ragSources.map(r => r.url));
+        const dedupedFirecrawl = firecrawlSources.filter((s) => {
+          if (mergedUrls.has(s.url)) return false;
+          mergedUrls.add(s.url);
+          return true;
         });
+
         send("step", { id: "sources", status: "done" });
 
-        // Step 3: Analyze and predict
+        // Step 3: Analyze and predict — pass RAG and live sources separately
         send("step", { id: "analyze", status: "running" });
-        const result = await analyzeAndPredict(text, sources, topics);
+        const result = await analyzeAndPredict(text, dedupedFirecrawl, ragSources, topics);
         send("step", { id: "analyze", status: "done" });
 
         // Build deduplicated source list from predictions
-        const seenUrls = new Set<string>();
+        const dedupUrls = new Set<string>();
         const allSources: { label: string; url: string }[] = [];
-        // Include any Firecrawl sources already streamed
-        for (const s of sources) {
-          if (!seenUrls.has(s.url)) {
-            seenUrls.add(s.url);
+        // Include any Firecrawl + RAG sources already streamed
+        for (const s of [...dedupedFirecrawl, ...ragSources]) {
+          if (!dedupUrls.has(s.url)) {
+            dedupUrls.add(s.url);
             allSources.push({ label: s.title, url: s.url });
           }
         }
         // Add prediction sources and stream any new ones
         for (const prediction of result.predictions) {
           for (const s of prediction.sources) {
-            if (!seenUrls.has(s.url)) {
-              seenUrls.add(s.url);
+            if (!dedupUrls.has(s.url)) {
+              dedupUrls.add(s.url);
               allSources.push(s);
               send("source", { label: s.label, url: s.url, domain: new URL(s.url).hostname });
             }

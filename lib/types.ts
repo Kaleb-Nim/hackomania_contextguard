@@ -7,6 +7,8 @@ export type {
   Language,
 } from "@/data/demo-scenario";
 
+export type { RagSource } from "@/lib/clickhouse/rag";
+
 export interface TopicExtraction {
   topics: string[];
   affectedCommunities: string[];

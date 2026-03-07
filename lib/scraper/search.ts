@@ -1,4 +1,7 @@
 import { getFirecrawl } from "./firecrawl-client";
+import { embedText } from "../ai/embedding";
+import { searchByTopicsAndEmbedding } from "../clickhouse/rag";
+import type { RagSource } from "../clickhouse/rag";
 import type { ScrapedSource } from "../types";
 
 const DOMAINS = [
@@ -70,3 +73,36 @@ async function searchSingle(query: string): Promise<ScrapedSource[]> {
     return [];
   }
 }
+
+/**
+ * Search for similar articles in ClickHouse using hybrid search
+ * (topic filtering + vector similarity). Returns enriched RagSource
+ * objects with credibility scores and topic metadata.
+ */
+export async function searchClickHouseRAG(
+  text: string,
+  topics: string[],
+  onSource?: (source: ScrapedSource) => void
+): Promise<RagSource[]> {
+  try {
+    const embedding = await embedText(text);
+    const ragResults = await searchByTopicsAndEmbedding(embedding, topics, 15);
+
+    // Stream each as a ScrapedSource for the UI
+    for (const r of ragResults) {
+      onSource?.({
+        url: r.url,
+        title: r.title,
+        content: r.content.slice(0, MAX_CONTENT_LENGTH),
+        domain: r.domain,
+      });
+    }
+
+    return ragResults;
+  } catch (error) {
+    console.error("ClickHouse RAG search error:", error);
+    return [];
+  }
+}
+
+
