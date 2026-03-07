@@ -1,4 +1,4 @@
-import { anthropic } from "./client";
+import { genAI } from "./client";
 import type {
   ScrapedSource,
   TopicExtraction,
@@ -28,13 +28,15 @@ export async function analyzeAndPredict(
           .join("\n---\n")
       : "No historical sources were retrieved. Use your knowledge of Singapore's misinformation landscape to generate predictions.";
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 8192,
-    messages: [
-      {
-        role: "user",
-        content: `You are ContextGuard, Singapore's rumour pre-mortem prediction engine. Given an official government announcement and historical misinformation sources, predict the false narratives that will likely emerge.
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+    generationConfig: {
+      responseMimeType: "application/json",
+    },
+  });
+
+  const result = await model.generateContent(
+    `You are ContextGuard, Singapore's rumour pre-mortem prediction engine. Given an official government announcement and historical misinformation sources, predict the false narratives that will likely emerge.
 
 ## Announcement
 ${text}
@@ -77,22 +79,8 @@ Respond ONLY with valid JSON matching this exact schema:
   "predictions": [RumourPrediction],
   "communityLeadersCount": number,
   "constituencies": number
-}`,
-      },
-    ],
-  });
+}`
+  );
 
-  const content = response.content[0];
-  if (content.type !== "text") {
-    throw new Error("Unexpected response type");
-  }
-
-  // Extract JSON from response (handle potential markdown code blocks)
-  let jsonText = content.text.trim();
-  const jsonMatch = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (jsonMatch) {
-    jsonText = jsonMatch[1].trim();
-  }
-
-  return JSON.parse(jsonText) as AnalysisResult;
+  return JSON.parse(result.response.text()) as AnalysisResult;
 }

@@ -46,7 +46,7 @@ export default function DashboardPage() {
   const [constituencies, setConstituencies] = useState(
     DEMO_SCENARIO.constituencies
   );
-  const [displaySources, setDisplaySources] = useState(DEMO_SOURCES);
+  const [displaySources, setDisplaySources] = useState<{ label: string; url: string }[]>([]);
 
   // Refs for syncing API response with animation
   const apiResultRef = useRef<AnalyzeResponse | null>(null);
@@ -80,28 +80,53 @@ export default function DashboardPage() {
 
   const handleAnalyse = useCallback(() => {
     setStep("analyzing");
+    setDisplaySources([]);
     apiResultRef.current = null;
     animationDoneRef.current = false;
     setIsWaitingForApi(false);
 
-    // Fire API call
+    // SSE stream for real-time source updates
     fetch("/api/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: announcementText }),
     })
-      .then((res) => res.json())
-      .then((data: AnalyzeResponse) => {
-        if (animationDoneRef.current) {
-          // Animation already finished — show results immediately
-          showResults(data);
-        } else {
-          // Animation still running — store result for later
-          apiResultRef.current = data;
+      .then(async (res) => {
+        if (!res.body) throw new Error("No stream body");
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          // Parse SSE events from buffer
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+
+          let currentEvent = "";
+          for (const line of lines) {
+            if (line.startsWith("event: ")) {
+              currentEvent = line.slice(7);
+            } else if (line.startsWith("data: ")) {
+              const data = JSON.parse(line.slice(6));
+              if (currentEvent === "source") {
+                setDisplaySources((prev) => [...prev, { label: data.label, url: data.url }]);
+              } else if (currentEvent === "result") {
+                const result = data as AnalyzeResponse;
+                if (animationDoneRef.current) {
+                  showResults(result);
+                } else {
+                  apiResultRef.current = result;
+                }
+              }
+            }
+          }
         }
       })
       .catch(() => {
-        // On error, use demo data
         const fallback: AnalyzeResponse = {
           predictions: DEMO_SCENARIO.predictions,
           historicalPatterns: DEMO_SCENARIO.historicalPatterns,
@@ -137,7 +162,7 @@ export default function DashboardPage() {
     setHistoricalPatterns(DEMO_SCENARIO.historicalPatterns);
     setCommunityLeadersCount(DEMO_SCENARIO.communityLeadersCount);
     setConstituencies(DEMO_SCENARIO.constituencies);
-    setDisplaySources(DEMO_SOURCES);
+    setDisplaySources([]);
     apiResultRef.current = null;
     animationDoneRef.current = false;
     setIsWaitingForApi(false);

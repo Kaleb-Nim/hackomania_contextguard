@@ -11,26 +11,31 @@ const MAX_CONTENT_LENGTH = 2000;
 const MAX_TOTAL_SOURCES = 15;
 
 export async function searchHistoricalSources(
-  queries: string[]
+  queries: string[],
+  onSource?: (source: ScrapedSource) => void
 ): Promise<ScrapedSource[]> {
-  const allPromises: Promise<ScrapedSource[]>[] = [];
+  const sources: ScrapedSource[] = [];
+  const seenUrls = new Set<string>();
 
+  const allPromises: Promise<ScrapedSource[]>[] = [];
   for (const query of queries) {
     for (const domain of DOMAINS) {
       allPromises.push(searchSingle(`${query} ${domain}`));
     }
   }
 
-  const results = await Promise.allSettled(allPromises);
-  const sources: ScrapedSource[] = [];
-  const seenUrls = new Set<string>();
+  // Process each search as it resolves to stream sources in real time
+  const pending = allPromises.map((p, i) =>
+    p.then((result) => ({ index: i, result })).catch(() => ({ index: i, result: [] as ScrapedSource[] }))
+  );
 
-  for (const result of results) {
-    if (result.status !== "fulfilled") continue;
-    for (const source of result.value) {
+  for (const promise of pending) {
+    const { result } = await promise;
+    for (const source of result) {
       if (seenUrls.has(source.url)) continue;
       seenUrls.add(source.url);
       sources.push(source);
+      onSource?.(source);
       if (sources.length >= MAX_TOTAL_SOURCES) return sources;
     }
   }

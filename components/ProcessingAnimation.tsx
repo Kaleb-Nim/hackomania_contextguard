@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { AnalyzeStep } from "@/data/demo-scenario";
 
 interface ProcessingAnimationProps {
@@ -18,9 +18,9 @@ export default function ProcessingAnimation({
 }: ProcessingAnimationProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [visibleSources, setVisibleSources] = useState(0);
+  const prevSourceCount = useRef(0);
   const stepsFinished = currentStep >= steps.length;
-  const sourcesActive = currentStep >= 3;
-  const sourcesFinished = visibleSources >= sources.length;
+  const sourcesFinished = visibleSources >= sources.length && sources.length > 0;
 
   // Step timer
   useEffect(() => {
@@ -32,18 +32,19 @@ export default function ProcessingAnimation({
     }
   }, [currentStep, steps.length]);
 
-  // Source streaming timer — starts when step 4 (index 3) becomes active
+  // When new sources arrive from the stream, reveal them with a staggered delay
   useEffect(() => {
-    if (!sourcesActive || sources.length === 0) return;
-    if (visibleSources >= sources.length) return;
+    if (sources.length > prevSourceCount.current) {
+      prevSourceCount.current = sources.length;
+      // Reveal the newly arrived source after a short delay
+      const timer = setTimeout(() => {
+        setVisibleSources(sources.length);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [sources.length]);
 
-    const timer = setTimeout(() => {
-      setVisibleSources((s) => s + 1);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [sourcesActive, visibleSources, sources.length]);
-
-  // Fire onComplete only when both steps and sources are done AND not waiting for API
+  // Fire onComplete only when steps done, all sources revealed, and not waiting
   useEffect(() => {
     if (stepsFinished && sourcesFinished && !isWaiting) {
       const timer = setTimeout(onComplete, 600);
@@ -100,8 +101,8 @@ export default function ProcessingAnimation({
           </div>
         ))}
 
-        {/* Source retrieval feed */}
-        {sourcesActive && sources.length > 0 && (
+        {/* Source retrieval feed — shows as soon as sources start arriving */}
+        {sources.length > 0 && (
           <div
             style={{
               borderTop: "1px solid rgba(255,255,255,0.06)",
@@ -115,14 +116,18 @@ export default function ProcessingAnimation({
               <span className="font-mono text-[12px] tracking-[0.06em] text-blue-400">
                 RETRIEVING SOURCES
               </span>
+              <span className="ml-auto font-mono text-[10px] text-text-muted">
+                {visibleSources}/{sources.length} found
+              </span>
             </div>
             {sources.map((source, i) => (
               <div
-                key={i}
-                className="flex items-center gap-2 transition-opacity duration-500"
+                key={`${source.url}-${i}`}
+                className="flex items-center gap-2 transition-all duration-500"
                 style={{
                   padding: "5px 0",
-                  opacity: i < visibleSources ? 1 : i === visibleSources && sourcesActive ? 0.4 : 0,
+                  opacity: i < visibleSources ? 1 : 0.3,
+                  transform: i < visibleSources ? "translateX(0)" : "translateX(8px)",
                 }}
               >
                 <span className="w-5 text-center text-[12px] text-blue-400/70">
@@ -132,18 +137,16 @@ export default function ProcessingAnimation({
                   href={source.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[12px] transition-colors hover:underline"
+                  className="truncate text-[12px] transition-colors hover:underline"
                   style={{
                     color: i < visibleSources ? "rgba(96,165,250,0.7)" : "rgba(96,165,250,0.4)",
                   }}
                 >
                   {source.label}
                 </a>
-                {i === visibleSources && !sourcesFinished && (
-                  <span className="ml-auto font-mono text-[10px] text-text-muted">
-                    fetching...
-                  </span>
-                )}
+                <span className="ml-auto shrink-0 font-mono text-[10px] text-text-muted/50">
+                  {new URL(source.url).hostname}
+                </span>
               </div>
             ))}
           </div>
