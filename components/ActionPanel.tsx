@@ -25,9 +25,9 @@ export default function ActionPanel({
     const fetchMemberCount = async () => {
       try {
         const res = await fetch('/api/telegram?action=count', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ chatId: "@LIMIT_TEST_HACKOMAINA", message: "count_only" })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chatId: "@LIMIT_TEST_HACKOMAINA", message: "count_only" })
         });
         const data = await res.json();
         if (data.memberCount) {
@@ -52,9 +52,9 @@ export default function ActionPanel({
     let hasError = false;
     let errorMessage = "";
     let memberCountStr = "";
-    
+
     try {
-      const counterNarrativesText = DEMO_SCENARIO.predictions.map(p => 
+      const counterNarrativesText = DEMO_SCENARIO.predictions.map(p =>
         `🚨 ${p.title}\n` +
         `EN: ${p.counterNarratives.en}\n\n` +
         `ZH: ${p.counterNarratives.zh}\n\n` +
@@ -62,7 +62,7 @@ export default function ActionPanel({
         `TA: ${p.counterNarratives.ta}`
       ).join('\n\n=========================\n\n');
 
-      const messageText = `🛡️ ContextGuard Alert 🛡️\n\nCounter-narratives have been successfully deployed to ${communityLeadersCount} verified community leaders across ${constituencies} constituencies.\n\n=========================\n\n${counterNarrativesText}`;
+      const messageText = `🛡️ ContextGuard Alert 🛡️\n\n=========================\n\n${counterNarrativesText}`;
 
       const res = await fetch('/api/telegram', {
         method: 'POST',
@@ -74,16 +74,16 @@ export default function ActionPanel({
           message: messageText,
         }),
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok) {
-         hasError = true;
-         errorMessage = data.error || "Failed to send message";
-         console.error("Telegram API Error:", data.error);
+        hasError = true;
+        errorMessage = data.error || "Failed to send message";
+        console.error("Telegram API Error:", data.error);
       } else {
-         memberCountStr = data.memberCount ? ` and ${data.memberCount} Telegram users` : " and Telegram";
-         if (data.memberCount) setTelegramMemberCount(data.memberCount);
+        memberCountStr = data.memberCount ? ` and ${data.memberCount} Telegram users` : " and Telegram";
+        if (data.memberCount) setTelegramMemberCount(data.memberCount);
       }
     } catch (error: any) {
       hasError = true;
@@ -92,15 +92,15 @@ export default function ActionPanel({
     } finally {
       setIsDeploying(false);
       setShowModal(false);
-      
+
       if (hasError) {
-         setToastMessage(`Error: ${errorMessage}`);
-         setIsErrorToast(true);
+        setToastMessage(`Error: ${errorMessage}`);
+        setIsErrorToast(true);
       } else {
-         setToastMessage(`\u2713 Counter-narratives deployed to ${communityLeadersCount} community leaders${memberCountStr}`);
-         setIsErrorToast(false);
+        setToastMessage(`\u2713 Counter-narratives deployed to ${communityLeadersCount} community leaders${memberCountStr}`);
+        setIsErrorToast(false);
       }
-      
+
       setShowToast(true);
     }
   };
