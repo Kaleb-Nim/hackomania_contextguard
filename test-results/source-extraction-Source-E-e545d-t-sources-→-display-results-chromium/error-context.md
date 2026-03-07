@@ -1,0 +1,94 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "ContextGuard" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: ContextGuard
+        - generic [ref=e8]:
+          - link "Home" [ref=e9] [cursor=pointer]:
+            - /url: /
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Community" [ref=e11] [cursor=pointer]:
+            - /url: /community
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e16]: System Active
+        - heading "ContextGuard" [level=1] [ref=e17]
+        - paragraph [ref=e18]: Rumour Pre-Mortem Engine — Singapore
+      - generic [ref=e19]:
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - generic [ref=e23]: Predicted Rumours
+            - generic [ref=e24]: "4"
+            - generic [ref=e25]: across 4 language communities
+          - generic [ref=e26]:
+            - generic [ref=e27]: Highest Risk
+            - generic [ref=e28]: 94%
+            - generic [ref=e29]: Supply scarcity anxiety
+          - generic [ref=e30]:
+            - generic [ref=e31]: Time Advantage
+            - generic [ref=e32]: 6-8h
+            - generic [ref=e33]: before viral spread
+        - generic [ref=e34]:
+          - generic [ref=e35]: 🧠 Corpus Pattern Matches
+          - generic [ref=e36]:
+            - generic [ref=e37]: DORSCON Orange Upgrade (Feb 2020)
+            - generic [ref=e41]: 94%
+          - generic [ref=e42]:
+            - generic [ref=e43]: Circuit Breaker Announcement (Apr 2020)
+            - generic [ref=e47]: 87%
+          - generic [ref=e48]:
+            - generic [ref=e49]: Phase 2 Heightened Alert (Jul 2021)
+            - generic [ref=e53]: 72%
+          - generic [ref=e54]:
+            - generic [ref=e55]: CPF Adjustment Notice (2019)
+            - generic [ref=e59]: 41%
+        - generic [ref=e60]: Predicted False Narratives
+        - generic [ref=e61]:
+          - generic [ref=e64] [cursor=pointer]:
+            - generic [ref=e65]: ▸
+            - generic [ref=e66]:
+              - generic [ref=e68]: CRITICAL
+              - heading "“Supermarkets running out of rice and essential supplies”" [level=3] [ref=e69]
+              - generic [ref=e70]:
+                - generic [ref=e71]: "Channel: Mandarin & dialect WhatsApp groups"
+                - generic [ref=e72]: "Trigger: Supply scarcity anxiety"
+          - generic [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]: ▸
+            - generic [ref=e77]:
+              - generic [ref=e79]: HIGH
+              - heading "“Government hiding true number of COVID cases”" [level=3] [ref=e80]
+              - generic [ref=e81]:
+                - generic [ref=e82]: "Channel: English Twitter/X & Reddit r/singapore"
+                - generic [ref=e83]: "Trigger: Institutional distrust"
+          - generic [ref=e86] [cursor=pointer]:
+            - generic [ref=e87]: ▸
+            - generic [ref=e88]:
+              - generic [ref=e90]: HIGH
+              - heading "“Specific ethnic or migrant worker communities blamed as source of spread”" [level=3] [ref=e91]
+              - generic [ref=e92]:
+                - generic [ref=e93]: "Channel: Malay & Tamil community Telegram groups"
+                - generic [ref=e94]: "Trigger: Racial scapegoating & in-group fear"
+          - generic [ref=e97] [cursor=pointer]:
+            - generic [ref=e98]: ▸
+            - generic [ref=e99]:
+              - generic [ref=e101]: MEDIUM
+              - heading "“Traditional remedies or specific foods can prevent/cure COVID”" [level=3] [ref=e102]
+              - generic [ref=e103]:
+                - generic [ref=e104]: "Channel: Mandarin Facebook groups & family WhatsApp"
+                - generic [ref=e105]: "Trigger: Health anxiety & folk-medicine trust"
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - generic [ref=e109]: Deploy to Community Network
+            - generic [ref=e110]: Push counter-narratives to 847 verified community leaders across 23 constituencies
+          - button "Deploy Now →" [ref=e111] [cursor=pointer]
+        - button "← New Analysis" [ref=e112] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e118] [cursor=pointer]:
+    - img [ref=e119]
+  - alert [ref=e122]
+```

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import ProcessingAnimation from "@/components/ProcessingAnimation";
 import RumourCard from "@/components/RumourCard";
@@ -8,7 +8,13 @@ import ActionPanel from "@/components/ActionPanel";
 import SummaryStats from "@/components/SummaryStats";
 import PatternBar from "@/components/PatternBar";
 import Navbar from "@/components/Navbar";
-import { DEMO_SCENARIO } from "@/data/demo-scenario";
+import {
+  DEMO_SCENARIO,
+  DEMO_SOURCES,
+  type RumourPrediction,
+  type HistoricalPattern,
+} from "@/data/demo-scenario";
+import type { AnalyzeResponse } from "@/lib/types";
 
 const AnnouncementInput = dynamic(
   () => import("@/components/AnnouncementInput"),
@@ -27,24 +33,114 @@ export default function DashboardPage() {
   );
   const [inputMode, setInputMode] = useState<"text" | "pdf">("text");
 
-  const handleAnalyse = useCallback(() => {
-    setStep("analyzing");
+  // Dynamic state from API
+  const [predictions, setPredictions] = useState<RumourPrediction[]>(
+    DEMO_SCENARIO.predictions
+  );
+  const [historicalPatterns, setHistoricalPatterns] = useState<
+    HistoricalPattern[]
+  >(DEMO_SCENARIO.historicalPatterns);
+  const [communityLeadersCount, setCommunityLeadersCount] = useState(
+    DEMO_SCENARIO.communityLeadersCount
+  );
+  const [constituencies, setConstituencies] = useState(
+    DEMO_SCENARIO.constituencies
+  );
+  const [displaySources, setDisplaySources] = useState(DEMO_SOURCES);
+
+  // Refs for syncing API response with animation
+  const apiResultRef = useRef<AnalyzeResponse | null>(null);
+  const animationDoneRef = useRef(false);
+  const [isWaitingForApi, setIsWaitingForApi] = useState(false);
+
+  const applyResults = useCallback((data: AnalyzeResponse) => {
+    setPredictions(data.predictions);
+    setHistoricalPatterns(data.historicalPatterns);
+    setCommunityLeadersCount(data.communityLeadersCount);
+    setConstituencies(data.constituencies);
+    if (data.sources && data.sources.length > 0) {
+      setDisplaySources(data.sources);
+    }
   }, []);
 
+  const showResults = useCallback(
+    (data: AnalyzeResponse) => {
+      applyResults(data);
+      setIsWaitingForApi(false);
+      setStep("results");
+      let r = 0;
+      const interval = setInterval(() => {
+        r++;
+        setVisibleRumours(r);
+        if (r >= data.predictions.length) clearInterval(interval);
+      }, 350);
+    },
+    [applyResults]
+  );
+
+  const handleAnalyse = useCallback(() => {
+    setStep("analyzing");
+    apiResultRef.current = null;
+    animationDoneRef.current = false;
+    setIsWaitingForApi(false);
+
+    // Fire API call
+    fetch("/api/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: announcementText }),
+    })
+      .then((res) => res.json())
+      .then((data: AnalyzeResponse) => {
+        if (animationDoneRef.current) {
+          // Animation already finished — show results immediately
+          showResults(data);
+        } else {
+          // Animation still running — store result for later
+          apiResultRef.current = data;
+        }
+      })
+      .catch(() => {
+        // On error, use demo data
+        const fallback: AnalyzeResponse = {
+          predictions: DEMO_SCENARIO.predictions,
+          historicalPatterns: DEMO_SCENARIO.historicalPatterns,
+          communityLeadersCount: DEMO_SCENARIO.communityLeadersCount,
+          constituencies: DEMO_SCENARIO.constituencies,
+          sources: DEMO_SOURCES,
+          fallback: true,
+        };
+        if (animationDoneRef.current) {
+          showResults(fallback);
+        } else {
+          apiResultRef.current = fallback;
+        }
+      });
+  }, [announcementText, showResults]);
+
   const handleProcessingComplete = useCallback(() => {
-    setStep("results");
-    let r = 0;
-    const interval = setInterval(() => {
-      r++;
-      setVisibleRumours(r);
-      if (r >= DEMO_SCENARIO.predictions.length) clearInterval(interval);
-    }, 350);
-  }, []);
+    animationDoneRef.current = true;
+    if (apiResultRef.current) {
+      // API already finished — show results immediately
+      showResults(apiResultRef.current);
+    } else {
+      // API still running — show "Finalizing..." state
+      setIsWaitingForApi(true);
+    }
+  }, [showResults]);
 
   const handleReset = () => {
     setStep("input");
     setExpandedRumour(null);
     setVisibleRumours(0);
+    setPredictions(DEMO_SCENARIO.predictions);
+    setHistoricalPatterns(DEMO_SCENARIO.historicalPatterns);
+    setCommunityLeadersCount(DEMO_SCENARIO.communityLeadersCount);
+    setConstituencies(DEMO_SCENARIO.constituencies);
+    setDisplaySources(DEMO_SOURCES);
+    apiResultRef.current = null;
+    animationDoneRef.current = false;
+    setIsWaitingForApi(false);
   };
 
   return (
@@ -92,7 +188,9 @@ export default function DashboardPage() {
         {step === "analyzing" && (
           <ProcessingAnimation
             steps={DEMO_SCENARIO.analyzeSteps}
+            sources={displaySources}
             onComplete={handleProcessingComplete}
+            isWaiting={isWaitingForApi}
           />
         )}
 
@@ -101,7 +199,21 @@ export default function DashboardPage() {
           <div style={{ animation: "fadeIn 0.5s ease" }}>
             {/* Summary stats */}
             <div className="mb-7">
-              <SummaryStats />
+              <SummaryStats
+                predictionsCount={predictions.length}
+                highestRiskScore={
+                  predictions.length > 0
+                    ? Math.max(...predictions.map((p) => p.riskScore))
+                    : 0
+                }
+                highestRiskSub={
+                  predictions.length > 0
+                    ? predictions.reduce((a, b) =>
+                        a.riskScore > b.riskScore ? a : b
+                      ).trigger
+                    : ""
+                }
+              />
             </div>
 
             {/* Historical patterns */}
@@ -117,13 +229,11 @@ export default function DashboardPage() {
               <div className="mb-3.5 text-[11px] font-bold tracking-[0.08em] uppercase text-text-tertiary">
                 &#129504; Corpus Pattern Matches
               </div>
-              {DEMO_SCENARIO.historicalPatterns.map((p, i) => (
+              {historicalPatterns.map((p, i) => (
                 <div
                   key={i}
                   className={
-                    i < DEMO_SCENARIO.historicalPatterns.length - 1
-                      ? "mb-2.5"
-                      : ""
+                    i < historicalPatterns.length - 1 ? "mb-2.5" : ""
                   }
                 >
                   <div className="mb-1 text-[12px] text-text-secondary">
@@ -140,7 +250,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {DEMO_SCENARIO.predictions.map((prediction, i) => (
+              {predictions.map((prediction, i) => (
                 <div
                   key={prediction.id}
                   style={{
@@ -172,8 +282,8 @@ export default function DashboardPage() {
             {/* Deploy panel */}
             <div className="mt-7">
               <ActionPanel
-                communityLeadersCount={DEMO_SCENARIO.communityLeadersCount}
-                constituencies={DEMO_SCENARIO.constituencies}
+                communityLeadersCount={communityLeadersCount}
+                constituencies={constituencies}
               />
             </div>
 

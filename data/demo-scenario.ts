@@ -16,6 +16,7 @@ export interface RumourPrediction {
     ms: string;
     ta: string;
   };
+  sources: { label: string; url: string }[];
   policyRecommendations: string[];
 }
 
@@ -57,6 +58,42 @@ export const LANGUAGE_FLAGS: Record<Language, string> = {
   ms: "\u{1F1F2}\u{1F1FE}",
   ta: "\u{1F1EE}\u{1F1F3}",
 };
+
+// Deduplicated flat array of all sources across predictions
+export const DEMO_SOURCES: { label: string; url: string }[] = (() => {
+  const seen = new Set<string>();
+  const sources: { label: string; url: string }[] = [];
+  for (const p of [
+    { sources: [
+      { label: "Gov.sg — No need to panic buy", url: "https://www.gov.sg/article/no-need-to-panic-buy-singapore-has-sufficient-supply-of-food-and-essential-items" },
+      { label: "SFA — Food Supply Assurance", url: "https://www.sfa.gov.sg/food-farming/singapore-food-supply/food-supply-sources" },
+      { label: "CNA — Supermarkets restock shelves", url: "https://www.channelnewsasia.com/singapore/covid-19-supermarkets-restock-shelves-panic-buying-dorscon-orange-941711" },
+    ]},
+    { sources: [
+      { label: "MOH — COVID-19 Situation Update", url: "https://www.moh.gov.sg/covid-19" },
+      { label: "MOH — Daily Case Reports", url: "https://www.moh.gov.sg/covid-19/past-updates" },
+      { label: "WHO — Singapore Transparency Commendation", url: "https://www.who.int/singapore" },
+    ]},
+    { sources: [
+      { label: "MOH — COVID-19 Situation Report", url: "https://www.moh.gov.sg/covid-19" },
+      { label: "MOM — Advisory on Migrant Workers", url: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
+      { label: "POFMA Office — Correction Directions", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
+    ]},
+    { sources: [
+      { label: "MOH — Official Medical Guidance", url: "https://www.moh.gov.sg/covid-19/vaccination" },
+      { label: "HSA — Safety Alerts on Unproven Remedies", url: "https://www.hsa.gov.sg/consumer-safety/articles/covid19_unproven_claims" },
+      { label: "POFMA — Correction on False Cure Claims", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
+    ]},
+  ]) {
+    for (const s of p.sources) {
+      if (!seen.has(s.url)) {
+        seen.add(s.url);
+        sources.push(s);
+      }
+    }
+  }
+  return sources;
+})();
 
 export const DEMO_SCENARIO: DemoScenario = {
   id: "dorscon-orange-2020",
@@ -109,6 +146,11 @@ Members of the public are advised to continue practising good personal hygiene. 
         ms: "Singapura mengekalkan stok simpanan strategik negara bagi barangan keperluan termasuk beras. Tahap bekalan semasa stabil dan diisi semula setiap hari. Semua pasar raya utama mengesahkan operasi pengisian stok berjalan seperti biasa. Tidak perlu membeli lebih daripada jumlah biasa anda.",
         ta: "\u0B85\u0BB0\u0BBF\u0B9A\u0BBF \u0B89\u0BB3\u0BCD\u0BB3\u0BBF\u0B9F\u0BCD\u0B9F \u0B85\u0BA4\u0BCD\u0BA4\u0BBF\u0BAF\u0BBE\u0BB5\u0B9A\u0BBF\u0BAF\u0BAA\u0BCD \u0BAA\u0BCA\u0BB0\u0BC1\u0B9F\u0BCD\u0B95\u0BB3\u0BBF\u0BA9\u0BCD \u0BA4\u0BC7\u0B9A\u0BBF\u0BAF \u0BAE\u0BC2\u0BB2\u0BCB\u0BAA\u0BBE\u0BAF \u0B87\u0BB0\u0BC1\u0BAA\u0BCD\u0BAA\u0BC1\u0B95\u0BB3\u0BC8 \u0B9A\u0BBF\u0B99\u0BCD\u0B95\u0BAA\u0BCD\u0BAA\u0BC2\u0BB0\u0BCD \u0BAA\u0BB0\u0BBE\u0BAE\u0BB0\u0BBF\u0BA4\u0BCD\u0BA4\u0BC1 \u0BB5\u0BB0\u0BC1\u0B95\u0BBF\u0BB1\u0BA4\u0BC1. \u0BA4\u0BB1\u0BCD\u0BAA\u0BCB\u0BA4\u0BC8\u0BAF \u0BB5\u0BBF\u0BA8\u0BBF\u0BAF\u0BCB\u0B95 \u0BA8\u0BBF\u0BB2\u0BC8 \u0BA8\u0BBF\u0BB2\u0BC8\u0BAF\u0BBE\u0B95\u0BB5\u0BC1\u0BAE\u0BCD, \u0BA4\u0BBF\u0BA9\u0BAE\u0BC1\u0BAE\u0BCD \u0BA8\u0BBF\u0BB0\u0BAA\u0BCD\u0BAA\u0BAA\u0BCD\u0BAA\u0B9F\u0BCD\u0B9F\u0BC1\u0BAE\u0BCD \u0BB5\u0BB0\u0BC1\u0B95\u0BBF\u0BB1\u0BA4\u0BC1. \u0BAA\u0BA4\u0B9F\u0BCD\u0B9F\u0BAE\u0BCD \u0B85\u0B9F\u0BC8\u0BAF \u0BB5\u0BC7\u0BA3\u0BCD\u0B9F\u0BBE\u0BAE\u0BCD.",
       },
+      sources: [
+        { label: "Gov.sg — No need to panic buy", url: "https://www.gov.sg/article/no-need-to-panic-buy-singapore-has-sufficient-supply-of-food-and-essential-items" },
+        { label: "SFA — Food Supply Assurance", url: "https://www.sfa.gov.sg/food-farming/singapore-food-supply/food-supply-sources" },
+        { label: "CNA — Supermarkets restock shelves", url: "https://www.channelnewsasia.com/singapore/covid-19-supermarkets-restock-shelves-panic-buying-dorscon-orange-941711" },
+      ],
       policyRecommendations: [
         "Impose temporary per-customer purchase limits on rice and essential staples at major supermarkets and deploy real-time inventory dashboards on gov.sg showing stock levels",
       ],
@@ -130,6 +172,11 @@ Members of the public are advised to continue practising good personal hygiene. 
         ms: "KKM menerbitkan jumlah kes harian yang disahkan oleh makmal hospital dan kemudahan ujian PCR. Semua data diaudit secara bebas. Pelaporan COVID Singapura diiktiraf di peringkat antarabangsa. Maklumat lanjut di moh.gov.sg.",
         ta: "MOH \u0B86\u0BB2\u0BCD \u0BA4\u0BBF\u0BA9\u0B9A\u0BB0\u0BBF \u0BB5\u0BB4\u0B95\u0BCD\u0B95\u0BC1 \u0B8E\u0BA3\u0BCD\u0BA3\u0BBF\u0B95\u0BCD\u0B95\u0BC8\u0B95\u0BB3\u0BCD \u0BAE\u0BB0\u0BC1\u0BA4\u0BCD\u0BA4\u0BC1\u0BB5\u0BAE\u0BA9\u0BC8 \u0B86\u0BAF\u0BCD\u0BB5\u0B95\u0B99\u0BCD\u0B95\u0BB3\u0BCD \u0BAE\u0BC2\u0BB2\u0BAE\u0BCD \u0B9A\u0BB0\u0BBF\u0BAA\u0BBE\u0BB0\u0BCD\u0B95\u0BCD\u0B95\u0BAA\u0BCD\u0BAA\u0B9F\u0BC1\u0B95\u0BBF\u0BA9\u0BCD\u0BB1\u0BA9. \u0B9A\u0BBF\u0B99\u0BCD\u0B95\u0BAA\u0BCD\u0BAA\u0BC2\u0BB0\u0BBF\u0BA9\u0BCD \u0BB5\u0BC6\u0BB3\u0BBF\u0BAA\u0BCD\u0BAA\u0B9F\u0BC8\u0BA4\u0BCD\u0BA4\u0BA9\u0BCD\u0BAE\u0BC8 \u0B9A\u0BB0\u0BCD\u0BB5\u0BA4\u0BC7\u0B9A \u0B85\u0BB3\u0BB5\u0BBF\u0BB2\u0BCD \u0B85\u0B99\u0BCD\u0B95\u0BC0\u0B95\u0BB0\u0BBF\u0B95\u0BCD\u0B95\u0BAA\u0BCD\u0BAA\u0B9F\u0BCD\u0B9F\u0BC1\u0BB3\u0BCD\u0BB3\u0BA4\u0BC1.",
       },
+      sources: [
+        { label: "MOH — COVID-19 Situation Update", url: "https://www.moh.gov.sg/covid-19" },
+        { label: "MOH — Daily Case Reports", url: "https://www.moh.gov.sg/covid-19/past-updates" },
+        { label: "WHO — Singapore Transparency Commendation", url: "https://www.who.int/singapore" },
+      ],
       policyRecommendations: [
         "Pre-publish daily case data with methodology notes and launch a dedicated moh.gov.sg/transparency page before media briefings to eliminate the information vacuum",
       ],
@@ -153,6 +200,11 @@ Members of the public are advised to continue practising good personal hygiene. 
         ms: "COVID-19 merebak melalui hubungan manusia tanpa mengira kaum, kewarganegaraan atau komuniti. Menyalahkan kumpulan tertentu adalah tidak tepat dari segi perubatan dan berbahaya dari segi sosial.",
         ta: "COVID-19 \u0B87\u0BA9\u0BAE\u0BCD, \u0BA4\u0BC7\u0B9A\u0BBF\u0BAF\u0BAE\u0BCD \u0B85\u0BB2\u0BCD\u0BB2\u0BA4\u0BC1 \u0B9A\u0BAE\u0BC2\u0B95\u0BA4\u0BCD\u0BA4\u0BC8\u0BAA\u0BCD \u0BAA\u0BCA\u0BB0\u0BC1\u0B9F\u0BCD\u0BAA\u0B9F\u0BC1\u0BA4\u0BCD\u0BA4\u0BBE\u0BAE\u0BB2\u0BCD \u0BAE\u0BA9\u0BBF\u0BA4 \u0BA4\u0BCA\u0B9F\u0BB0\u0BCD\u0BAA\u0BC1 \u0BAE\u0BC2\u0BB2\u0BAE\u0BCD \u0BAA\u0BB0\u0BB5\u0BC1\u0B95\u0BBF\u0BB1\u0BA4\u0BC1. \u0B95\u0BC1\u0BB1\u0BBF\u0BAA\u0BCD\u0BAA\u0BBF\u0B9F\u0BCD\u0B9F \u0B95\u0BC1\u0BB4\u0BC1\u0B95\u0BCD\u0B95\u0BB3\u0BC8\u0B95\u0BCD \u0B95\u0BC1\u0BB1\u0BCD\u0BB1\u0BAE\u0BCD \u0B9A\u0BBE\u0B9F\u0BCD\u0B9F\u0BC1\u0BB5\u0BA4\u0BC1 \u0BAE\u0BB0\u0BC1\u0BA4\u0BCD\u0BA4\u0BC1\u0BB5 \u0BB0\u0BC0\u0BA4\u0BBF\u0BAF\u0BBE\u0B95 \u0BA4\u0BB5\u0BB1\u0BBE\u0BA9\u0BA4\u0BC1.",
       },
+      sources: [
+        { label: "MOH — COVID-19 Situation Report", url: "https://www.moh.gov.sg/covid-19" },
+        { label: "MOM — Advisory on Migrant Workers", url: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
+        { label: "POFMA Office — Correction Directions", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
+      ],
       policyRecommendations: [
         "Issue joint MOM-MOH statement emphasizing virus transmission is not linked to any nationality or ethnicity, and fast-track POFMA corrections for posts attributing spread to specific racial groups",
       ],
@@ -175,6 +227,11 @@ Members of the public are advised to continue practising good personal hygiene. 
         ms: "Tiada makanan atau ubat tradisional yang terbukti secara saintifik dapat mencegah atau menyembuhkan COVID-19. Sila ikut panduan perubatan rasmi KKM.",
         ta: "COVID-19 \u0B90\u0BA4\u0BCD \u0BA4\u0B9F\u0BC1\u0B95\u0BCD\u0B95\u0BC1\u0BAE\u0BCD \u0B85\u0BB2\u0BCD\u0BB2\u0BA4\u0BC1 \u0B95\u0BC1\u0BA3\u0BAA\u0BCD\u0BAA\u0B9F\u0BC1\u0BA4\u0BCD\u0BA4\u0BC1\u0BAE\u0BCD \u0B89\u0BA3\u0BB5\u0BC1 \u0B85\u0BB2\u0BCD\u0BB2\u0BA4\u0BC1 \u0BAA\u0BBE\u0BB0\u0BAE\u0BCD\u0BAA\u0BB0\u0BBF\u0BAF \u0BAE\u0BB0\u0BC1\u0BA8\u0BCD\u0BA4\u0BC1 \u0B8E\u0BA4\u0BC1\u0BB5\u0BC1\u0BAE\u0BCD \u0B85\u0BB1\u0BBF\u0BB5\u0BBF\u0BAF\u0BB2\u0BCD \u0BB0\u0BC0\u0BA4\u0BBF\u0BAF\u0BBE\u0B95 \u0BA8\u0BBF\u0BB0\u0BC2\u0BAA\u0BBF\u0B95\u0BCD\u0B95\u0BAA\u0BCD\u0BAA\u0B9F\u0BB5\u0BBF\u0BB2\u0BCD\u0BB2\u0BC8. MOH \u0B87\u0BA9\u0BCD \u0B85\u0BA4\u0BBF\u0B95\u0BBE\u0BB0\u0BAA\u0BC2\u0BB0\u0BCD\u0BB5 \u0BAE\u0BB0\u0BC1\u0BA4\u0BCD\u0BA4\u0BC1\u0BB5 \u0BB5\u0BB4\u0BBF\u0B95\u0BBE\u0B9F\u0BCD\u0B9F\u0BC1\u0BA4\u0BB2\u0BC8\u0BAA\u0BCD \u0BAA\u0BBF\u0BA9\u0BCD\u0BAA\u0BB1\u0BCD\u0BB1\u0BC1\u0B99\u0BCD\u0B95\u0BB3\u0BCD.",
       },
+      sources: [
+        { label: "MOH — Official Medical Guidance", url: "https://www.moh.gov.sg/covid-19/vaccination" },
+        { label: "HSA — Safety Alerts on Unproven Remedies", url: "https://www.hsa.gov.sg/consumer-safety/articles/covid19_unproven_claims" },
+        { label: "POFMA — Correction on False Cure Claims", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
+      ],
       policyRecommendations: [
         "Direct HSA and TCM Practitioners Board to issue a joint public advisory debunking specific viral remedy claims with scientific evidence",
       ],
