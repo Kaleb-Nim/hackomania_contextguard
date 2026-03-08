@@ -23,6 +23,7 @@ export interface RumourPrediction {
 export interface HistoricalPattern {
   event: string;
   similarity: number;
+  source?: string;
 }
 
 export interface DemoScenario {
@@ -114,10 +115,10 @@ Members of the public are advised to continue practising good personal hygiene. 
 
 \u2014 Ministry of Health, Singapore`,
   historicalPatterns: [
-    { event: "DORSCON Orange Upgrade (Feb 2020)", similarity: 94 },
-    { event: "Circuit Breaker Announcement (Apr 2020)", similarity: 87 },
-    { event: "Phase 2 Heightened Alert (Jul 2021)", similarity: 72 },
-    { event: "CPF Adjustment Notice (2019)", similarity: 41 },
+    { event: "DORSCON Orange Upgrade (Feb 2020)", similarity: 94, source: "https://www.gov.sg/article/what-does-dorscon-orange-mean" },
+    { event: "Circuit Breaker Announcement (Apr 2020)", similarity: 87, source: "https://www.gov.sg/article/pm-lee-hsien-loong-on-the-covid-19-situation-in-singapore-3-april-2020" },
+    { event: "Phase 2 Heightened Alert (Jul 2021)", similarity: 72, source: "https://www.moh.gov.sg/covid-19/phase-2-heightened-alert" },
+    { event: "CPF Adjustment Notice (2019)", similarity: 41, source: "https://www.cpf.gov.sg/member/infohub/news/cpf-related-announcements" },
   ],
   predictions: [
     {

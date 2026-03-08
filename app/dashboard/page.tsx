@@ -7,6 +7,7 @@ import RumourCard from "@/components/RumourCard";
 import ActionPanel from "@/components/ActionPanel";
 import SummaryStats from "@/components/SummaryStats";
 import PatternBar from "@/components/PatternBar";
+import AnalyzedArticle from "@/components/AnalyzedArticle";
 import Navbar from "@/components/Navbar";
 import {
   DEMO_SCENARIO,
@@ -239,11 +240,12 @@ export default function DashboardPage() {
         {/* Results phase */}
         {step === "results" && (
           <div style={{ animation: "fadeIn 0.5s ease" }}>
-            {/* Summary stats */}
-            <div className="mb-7">
+            {/* Summary stats + analyzed article */}
+            <div className="mb-7 grid grid-cols-[auto_1fr] gap-3">
               <SummaryStats
                 predictionsCount={predictions.length}
               />
+              <AnalyzedArticle text={announcementText} />
             </div>
 
             {/* Historical patterns */}
@@ -266,8 +268,18 @@ export default function DashboardPage() {
                     i < historicalPatterns.length - 1 ? "mb-2.5" : ""
                   }
                 >
-                  <div className="mb-1 text-[12px] text-text-secondary">
-                    {p.event}
+                  <div className="mb-1 flex items-center gap-2 text-[12px] text-text-secondary">
+                    <span>{p.event}</span>
+                    {p.source && (
+                      <a
+                        href={p.source}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 font-mono text-[10px] text-text-muted transition-colors hover:text-text-secondary"
+                      >
+                        {new URL(p.source).hostname.replace(/^www\./, "")} &rarr;
+                      </a>
+                    )}
                   </div>
                   <PatternBar similarity={p.similarity} />
                 </div>

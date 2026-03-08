@@ -250,9 +250,9 @@ export const NIPAH_SCENARIO: DemoScenario = {
   announcementText: NIPAH_ANNOUNCEMENT_TEXT,
   predictions: nipahPredictions,
   historicalPatterns: [
-    { event: "Nipah Malaysia Outbreak (1998-1999)", similarity: 89 },
-    { event: "COVID DORSCON Orange (Feb 2020)", similarity: 82 },
-    { event: "COVID India Travel Ban (Apr 2021)", similarity: 76 },
-    { event: "COVID Dormitory Cluster (Apr 2020)", similarity: 71 },
+    { event: "Nipah Malaysia Outbreak (1998-1999)", similarity: 89, source: "https://www.who.int/news-room/fact-sheets/detail/nipah-virus" },
+    { event: "COVID DORSCON Orange (Feb 2020)", similarity: 82, source: "https://www.gov.sg/article/what-does-dorscon-orange-mean" },
+    { event: "COVID India Travel Ban (Apr 2021)", similarity: 76, source: "https://www.moh.gov.sg/news-highlights/details/border-control-measures-india" },
+    { event: "COVID Dormitory Cluster (Apr 2020)", similarity: 71, source: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
   ],
 };

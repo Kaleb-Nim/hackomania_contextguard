@@ -1,4 +1,4 @@
-import { genAI } from "./client";
+import { anthropic, genAI } from "./client";
 import type {
   ScrapedSource,
   TopicExtraction,
@@ -53,21 +53,13 @@ function formatLiveContext(sources: ScrapedSource[]): string {
     .join("\n---\n");
 }
 
-export async function analyzeAndPredict(
+function buildPrompt(
   text: string,
   liveSources: ScrapedSource[],
   ragSources: RagSource[],
   topics: TopicExtraction
-): Promise<AnalysisResult> {
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    generationConfig: {
-      responseMimeType: "application/json",
-    },
-  });
-
-  const result = await model.generateContent(
-    `You are ContextGuard, Singapore's rumour pre-mortem prediction engine. Given an official government announcement, historical misinformation data from our RAG database, and live web sources, predict the false narratives that will likely emerge.
+): string {
+  return `You are ContextGuard, Singapore's rumour pre-mortem prediction engine. Given an official government announcement, historical misinformation data from our RAG database, and live web sources, predict the false narratives that will likely emerge.
 
 ## Announcement
 ${text}
@@ -90,7 +82,7 @@ ${formatLiveContext(liveSources)}
 ## Instructions
 Generate a JSON response with:
 
-1. **historicalPatterns**: 3-5 historically similar events with similarity scores (0-100). Base these PRIMARILY on the RAG database sources above — they contain real POFMA cases, forum discussions, and news coverage of past misinformation events in Singapore. Reference specific sources by their RAG number (e.g., "Based on RAG 3...").
+1. **historicalPatterns**: 3-5 historically similar events with similarity scores (0-100) and a "source" URL linking to a credible reference for each event. Base these PRIMARILY on the RAG database sources above — they contain real POFMA cases, forum discussions, and news coverage of past misinformation events in Singapore. Use real URLs from the RAG and live sources. Reference specific sources by their RAG number (e.g., "Based on RAG 3...").
 
 2. **predictions**: 3-5 predicted false narratives, each with:
    - id: sequential number starting at 1
@@ -115,12 +107,55 @@ Order predictions by riskScore descending. Ensure counter-narratives are cultura
 
 Respond ONLY with valid JSON matching this exact schema:
 {
-  "historicalPatterns": [{"event": string, "similarity": number}],
+  "historicalPatterns": [{"event": string, "similarity": number, "source": string}],
   "predictions": [RumourPrediction],
   "communityLeadersCount": number,
   "constituencies": number
-}`
-  );
+}`;
+}
 
+export async function analyzeAndPredict(
+  text: string,
+  liveSources: ScrapedSource[],
+  ragSources: RagSource[],
+  topics: TopicExtraction
+): Promise<AnalysisResult> {
+  const prompt = buildPrompt(text, liveSources, ragSources, topics);
+
+  // Primary: Anthropic
+  try {
+    const message = await anthropic.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 8192,
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+
+    const content = message.content[0];
+    if (content.type === "text") {
+      // Extract JSON from response (handle potential markdown code blocks)
+      let jsonText = content.text.trim();
+      if (jsonText.startsWith("```")) {
+        jsonText = jsonText.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+      }
+      return JSON.parse(jsonText) as AnalysisResult;
+    }
+  } catch (error) {
+    console.error("Anthropic analyzeAndPredict failed, falling back to Gemini:", error);
+  }
+
+  // Fallback: Gemini
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash",
+    generationConfig: {
+      responseMimeType: "application/json",
+    },
+  });
+
+  const result = await model.generateContent(prompt);
   return JSON.parse(result.response.text()) as AnalysisResult;
 }
