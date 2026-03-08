@@ -19,8 +19,8 @@ export default function HeroSection() {
       >
         ContextGuard
       </h1>
-      <p className="mb-10 text-[14px] tracking-[0.02em] text-text-tertiary">
-        Rumour Pre-Mortem Engine &mdash; Singapore
+      <p className="mb-10 max-w-[520px] text-center text-[14px] tracking-[0.02em] text-text-tertiary">
+        Turning decades of Singapore&apos;s misinformation patterns into predictions, so the correction arrives before the rumour does.
       </p>
       <div className="flex gap-3">
         <Link
