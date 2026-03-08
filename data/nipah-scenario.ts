@@ -11,17 +11,17 @@ Measures were eased from 23 February 2026 following stabilisation of the situati
 — Ministry of Health, Singapore`;
 
 export const NIPAH_SOURCES: { label: string; url: string }[] = [
-  { label: "CNA — Singapore monitoring Nipah virus situation", url: "https://www.channelnewsasia.com/singapore/nipah-virus-india-koh-poh-koon-parliament-2026" },
+  { label: "MOH — Singapore's Response to Nipah Virus Infections", url: "https://www.moh.gov.sg/newsroom/singapore-s-response-to-nipah-virus-infections/" },
   { label: "WHO — Nipah virus infection India (DON-593)", url: "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON593" },
-  { label: "Singapore CDA — Precautionary measures for Nipah", url: "https://www.moh.gov.sg/news-highlights/details/precautionary-measures-nipah-2026" },
-  { label: "Singapore CDA — Easing of Nipah measures", url: "https://www.moh.gov.sg/news-highlights/details/easing-nipah-measures-feb-2026" },
-  { label: "MOH — Singapore's Response to Nipah Virus", url: "https://www.moh.gov.sg/nipah-virus-2026" },
-  { label: "Africa Check — False Nipah outbreak claims debunked", url: "https://africacheck.org/fact-checks/false-nipah-outbreak-uganda" },
-  { label: "AFP Fact Check — False posts about Nipah in Philippines", url: "https://factcheck.afp.com/nipah-virus-philippines-false" },
-  { label: "ISEAS — Coronavirus infodemic in Southeast Asia", url: "https://www.iseas.edu.sg/articles-commentaries/iseas-perspective/coronavirus-infodemic-southeast-asia" },
+  { label: "Singapore CDA — Precautionary measures for Nipah", url: "https://www.cda.gov.sg/news-and-events/cda-taking-first-steps-in-response-to-nipah-virus-infections--closely-monitoring-situation-in-west-bengal/" },
+  { label: "MOH — Operational protocols for Nipah", url: "https://www.moh.gov.sg/newsroom/operational-protocols-to-safeguard-local-healthcare-workers-in-light-of-overseas-nipah-virus-infections/" },
+  { label: "Singapore CDA — Nipah Virus Infection", url: "https://www.cda.gov.sg/professionals/diseases/nipah-virus-infection/" },
+  { label: "Africa Check — False Nipah outbreak claims debunked", url: "https://africacheck.org/fact-checks/meta-programme-fact-checks/claims-nipah-virus-outbreak-uganda-are-false" },
+  { label: "Rappler Fact Check — No confirmed Nipah case in Philippines", url: "https://www.rappler.com/newsbreak/fact-check/no-confirmed-nipah-virus-case-philippines-doh/" },
+  { label: "ISEAS — Coronavirus infodemic in Southeast Asia", url: "https://www.iseas.edu.sg/media/commentaries/the-coronavirus-infodemic-in-southeast-asia-panic-buying-and-mis-dis-information/" },
   { label: "POFMA Office — Correction Directions", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
-  { label: "MOM — Advisory on Migrant Workers", url: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
-  { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/news-events/nipah-facts-not-fiction" },
+  { label: "MOM — Safe Management Measures", url: "https://www.mom.gov.sg/covid-19/requirements-for-safe-management-measures" },
+  { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/articles/nipah-in-the-news-follow-facts-not-fiction/" },
 ];
 
 const nipahPredictions: RumourPrediction[] = [
@@ -42,9 +42,9 @@ const nipahPredictions: RumourPrediction[] = [
       ta: "சிங்கப்பூரில் நிபா வைரஸ் உறுதிசெய்யப்பட்ட நோயாளிகள் எவரும் இல்லை. சுகாதார அமைச்சு அனைத்து நடவடிக்கைகளையும் வெளிப்படையாக தெரிவித்துள்ளது. நோய் கண்காணிப்பு அமைப்பு உலகளவில் மிகவும் கடுமையானது.",
     },
     sources: [
-      { label: "CNA — Singapore monitoring Nipah virus situation", url: "https://www.channelnewsasia.com/singapore/nipah-virus-india-koh-poh-koon-parliament-2026" },
-      { label: "Singapore CDA — Precautionary measures for Nipah", url: "https://www.moh.gov.sg/news-highlights/details/precautionary-measures-nipah-2026" },
-      { label: "MOH — Singapore's Response to Nipah Virus", url: "https://www.moh.gov.sg/nipah-virus-2026" },
+      { label: "MOH — Singapore's Response to Nipah Virus Infections", url: "https://www.moh.gov.sg/newsroom/singapore-s-response-to-nipah-virus-infections/" },
+      { label: "Singapore CDA — Precautionary measures for Nipah", url: "https://www.cda.gov.sg/news-and-events/cda-taking-first-steps-in-response-to-nipah-virus-infections--closely-monitoring-situation-in-west-bengal/" },
+      { label: "Singapore CDA — Nipah Virus Infection", url: "https://www.cda.gov.sg/professionals/diseases/nipah-virus-infection/" },
     ],
     policyRecommendations: [
       "Publish brief 'Nipah situation: no cases in Singapore' updates weekly during monitoring periods — silence feeds conspiracy",
@@ -70,7 +70,7 @@ const nipahPredictions: RumourPrediction[] = [
     },
     sources: [
       { label: "WHO — Nipah virus infection India (DON-593)", url: "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON593" },
-      { label: "MOM — Advisory on Migrant Workers", url: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
+      { label: "MOM — Safe Management Measures", url: "https://www.mom.gov.sg/covid-19/requirements-for-safe-management-measures" },
       { label: "POFMA Office — Correction Directions", url: "https://www.pofmaoffice.gov.sg/regulations/protection-from-online-falsehoods-and-manipulation-act/" },
     ],
     policyRecommendations: [
@@ -98,8 +98,8 @@ const nipahPredictions: RumourPrediction[] = [
     },
     sources: [
       { label: "WHO — Nipah virus infection India (DON-593)", url: "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON593" },
-      { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/news-events/nipah-facts-not-fiction" },
-      { label: "AFP Fact Check — False posts about Nipah in Philippines", url: "https://factcheck.afp.com/nipah-virus-philippines-false" },
+      { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/articles/nipah-in-the-news-follow-facts-not-fiction/" },
+      { label: "Rappler Fact Check — No confirmed Nipah case in Philippines", url: "https://www.rappler.com/newsbreak/fact-check/no-confirmed-nipah-virus-case-philippines-doh/" },
     ],
     policyRecommendations: [
       "Partner with local content creators and fact-checkers to produce short-form video debunks matching the format of viral misinformation",
@@ -125,8 +125,8 @@ const nipahPredictions: RumourPrediction[] = [
       ta: "சிங்கப்பூரின் நடவடிக்கை WHO மதிப்பீடான குறைந்த உலகளாவிய ஆபத்துக்கு விகிதாச்சாரமானது. வெப்பநிலை பரிசோதனை, சுகாதார அறிக்கைகள், மேம்படுத்தப்பட்ட கண்காணிப்பு உள்ளிட்ட நடவடிக்கைகள் செயல்படுத்தப்பட்டுள்ளன.",
     },
     sources: [
-      { label: "CNA — Singapore monitoring Nipah virus situation", url: "https://www.channelnewsasia.com/singapore/nipah-virus-india-koh-poh-koon-parliament-2026" },
-      { label: "Singapore CDA — Easing of Nipah measures", url: "https://www.moh.gov.sg/news-highlights/details/easing-nipah-measures-feb-2026" },
+      { label: "MOH — Singapore's Response to Nipah Virus Infections", url: "https://www.moh.gov.sg/newsroom/singapore-s-response-to-nipah-virus-infections/" },
+      { label: "MOH — Operational protocols for Nipah", url: "https://www.moh.gov.sg/newsroom/operational-protocols-to-safeguard-local-healthcare-workers-in-light-of-overseas-nipah-virus-infections/" },
     ],
     policyRecommendations: [
       "Publish simplified risk assessment framework: 'Here's what would trigger escalation of measures'",
@@ -151,8 +151,8 @@ const nipahPredictions: RumourPrediction[] = [
       ta: "நிபா உணவு மூலம் பரவுவது மிகவும் குறிப்பிட்ட வழியில் மட்டுமே: பழவாவல் சுரப்புகளால் மாசுபட்ட பச்சை பேரீச்ச சாறு. இது சிங்கப்பூரில் விற்கப்படுவதில்லை. இறக்குமதி பழங்கள் பாதுகாப்பானவை.",
     },
     sources: [
-      { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/news-events/nipah-facts-not-fiction" },
-      { label: "Africa Check — False Nipah outbreak claims debunked", url: "https://africacheck.org/fact-checks/false-nipah-outbreak-uganda" },
+      { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/articles/nipah-in-the-news-follow-facts-not-fiction/" },
+      { label: "Africa Check — False Nipah outbreak claims debunked", url: "https://africacheck.org/fact-checks/meta-programme-fact-checks/claims-nipah-virus-outbreak-uganda-are-false" },
     ],
     policyRecommendations: [
       "Singapore Food Agency proactive statement on safety of imported food, specifically addressing fruits and pork",
@@ -178,7 +178,7 @@ const nipahPredictions: RumourPrediction[] = [
     },
     sources: [
       { label: "WHO — Nipah virus infection India (DON-593)", url: "https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON593" },
-      { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/news-events/nipah-facts-not-fiction" },
+      { label: "Doherty Institute — Nipah facts not fiction", url: "https://www.doherty.edu.au/articles/nipah-in-the-news-follow-facts-not-fiction/" },
     ],
     policyRecommendations: [
       "Do not over-engage — bioweapon narratives thrive on official denials. Prefer factual backgrounders over direct rebuttals",
@@ -203,8 +203,8 @@ const nipahPredictions: RumourPrediction[] = [
       ta: "வெப்பநிலை பரிசோதனை பல அடுக்கு அணுகுமுறையில் ஒரு அடுக்கு மட்டுமே. இது சுகாதார அறிக்கைகள், மருத்துவமனை கண்காணிப்புடன் இணைந்து செயல்படுகிறது.",
     },
     sources: [
-      { label: "MOH — Singapore's Response to Nipah Virus", url: "https://www.moh.gov.sg/nipah-virus-2026" },
-      { label: "CNA — Singapore monitoring Nipah virus situation", url: "https://www.channelnewsasia.com/singapore/nipah-virus-india-koh-poh-koon-parliament-2026" },
+      { label: "Singapore CDA — Nipah Virus Infection", url: "https://www.cda.gov.sg/professionals/diseases/nipah-virus-infection/" },
+      { label: "MOH — Singapore's Response to Nipah Virus Infections", url: "https://www.moh.gov.sg/newsroom/singapore-s-response-to-nipah-virus-infections/" },
     ],
     policyRecommendations: [
       "Government communications should always present screening as part of a system, never as a standalone solution",
@@ -228,8 +228,8 @@ const nipahPredictions: RumourPrediction[] = [
       ta: "உலகில் எங்கும் அங்கீகரிக்கப்பட்ட நிபா தடுப்பூசி இல்லை. விடுதி தொழிலாளர்களுக்கான சுகாதார பரிசோதனைகள் வழக்கமானவை. சிங்கப்பூர் சட்டத்தின் கீழ் அனைத்து மருத்துவ நடைமுறைகளுக்கும் தகவலறிந்த ஒப்புதல் தேவை.",
     },
     sources: [
-      { label: "MOM — Advisory on Migrant Workers", url: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
-      { label: "MOH — Singapore's Response to Nipah Virus", url: "https://www.moh.gov.sg/nipah-virus-2026" },
+      { label: "MOM — Safe Management Measures", url: "https://www.mom.gov.sg/covid-19/requirements-for-safe-management-measures" },
+      { label: "Singapore CDA — Nipah Virus Infection", url: "https://www.cda.gov.sg/professionals/diseases/nipah-virus-infection/" },
     ],
     policyRecommendations: [
       "All health procedures in dormitories must include explanation materials in workers' native languages (Tamil, Bengali, Mandarin, Burmese, Thai)",
@@ -251,8 +251,8 @@ export const NIPAH_SCENARIO: DemoScenario = {
   predictions: nipahPredictions,
   historicalPatterns: [
     { event: "Nipah Malaysia Outbreak (1998-1999)", similarity: 89, source: "https://www.who.int/news-room/fact-sheets/detail/nipah-virus" },
-    { event: "COVID DORSCON Orange (Feb 2020)", similarity: 82, source: "https://www.gov.sg/article/what-does-dorscon-orange-mean" },
-    { event: "COVID India Travel Ban (Apr 2021)", similarity: 76, source: "https://www.moh.gov.sg/news-highlights/details/border-control-measures-india" },
-    { event: "COVID Dormitory Cluster (Apr 2020)", similarity: 71, source: "https://www.mom.gov.sg/covid-19/advisory-on-safe-distancing-measures" },
+    { event: "COVID DORSCON Orange (Feb 2020)", similarity: 82, source: "https://www.gov.sg/article/additional-measures-introduced-with-dorscon-orange" },
+    { event: "COVID India Travel Ban (Apr 2021)", similarity: 76, source: "https://www.moh.gov.sg/newsroom/updates-on-border-measures-for-travellers-from-india-hong-kong-united-kingdom-and-south-africa/" },
+    { event: "COVID Dormitory Cluster (Apr 2020)", similarity: 71, source: "https://www.mom.gov.sg/covid-19/requirements-for-safe-management-measures" },
   ],
 };
