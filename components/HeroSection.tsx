@@ -36,18 +36,6 @@ export default function HeroSection() {
         >
           News Outlet Dashboard
         </Link>
-        <Link
-          href="/community"
-          className="cursor-pointer text-[13px] font-semibold text-text-tertiary no-underline transition-all hover:text-text-primary"
-          style={{
-            padding: "12px 32px",
-            background: "transparent",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: 8,
-          }}
-        >
-          Community Leader Portal
-        </Link>
       </div>
     </div>
   );

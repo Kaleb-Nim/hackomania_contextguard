@@ -234,23 +234,6 @@ export default function AnnouncementInput({
         </button>
       </div>
 
-      {/* Demo hint */}
-      <div
-        className="mt-5"
-        style={{
-          padding: "14px 18px",
-          background: "rgba(59,130,246,0.06)",
-          border: "1px solid rgba(59,130,246,0.12)",
-          borderRadius: 8,
-        }}
-      >
-        <p className="m-0 text-[12px] leading-[1.6] text-text-tertiary">
-          <span className="font-bold text-risk-medium">Demo mode:</span>{" "}
-          Pre-loaded with MOH DORSCON Orange announcement (Feb 2020). This is
-          the event that triggered the Sheng Siong rice panic. ContextGuard will
-          predict the rumours that <em>actually</em> emerged.
-        </p>
-      </div>
     </div>
   );
 }
