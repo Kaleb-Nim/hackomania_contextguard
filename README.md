@@ -4,6 +4,10 @@
 
 > **HackOMania Problem Statement:** How might we design AI-powered solutions that help local and multilingual communities in Singapore assess information credibility, understand context, and make informed decisions — especially during times of uncertainty?
 
+<p align="center">
+  <img src="public/screenshots/01-landing.png" alt="ContextGuard Landing Page" width="100%" />
+</p>
+
 ---
 
 ## The Problem
@@ -18,32 +22,24 @@ This pattern repeats every crisis: announcement → information vacuum → misin
 
 ContextGuard is **proactive**. It predicts what misinformation will emerge *before* it spreads, and arms trusted community leaders with pre-written counter-narratives in all 4 official languages.
 
+```mermaid
+flowchart TD
+    A["🖊️ Comms officer pastes announcement"] --> B["🔍 AI extracts topics, communities, triggers"]
+    B --> C{"Predicted False Narratives"}
+    C --> D["🔴 CRITICAL — Sheng Siong out of rice\n📱 Mandarin WhatsApp"]
+    C --> E["🟠 HIGH — Government hiding case counts\n📱 English Twitter/Reddit"]
+    C --> F["🟡 MEDIUM — Traditional remedies cure COVID\n📱 Mandarin Facebook"]
+    D & E & F --> G["✅ One-click deploy to 800+ community leaders"]
+
+    style D fill:#7f1d1d,stroke:#dc2626,color:#fca5a5
+    style E fill:#7c2d12,stroke:#ea580c,color:#fed7aa
+    style F fill:#713f12,stroke:#ca8a04,color:#fef08a
+    style G fill:#14532d,stroke:#22c55e,color:#bbf7d0
 ```
-Comms officer pastes announcement draft
-                │
-                ▼
-AI identifies: topics, affected communities, emotional triggers
-                │
-                ▼
-┌─────────────────────────────────────────────────────────┐
-│  PREDICTED FALSE NARRATIVES (ranked by virality risk)   │
-│                                                         │
-│  CRITICAL  "Sheng Siong has run out of rice"            │
-│            Channel: Mandarin WhatsApp groups            │
-│            Counter-narrative: [Ready in 4 languages]    │
-│                                                         │
-│  HIGH      "Government hiding true case counts"         │
-│            Channel: English Twitter/Reddit              │
-│            Counter-narrative: [Ready in 4 languages]    │
-│                                                         │
-│  MEDIUM    "Traditional remedies can cure COVID"        │
-│            Channel: Mandarin Facebook groups            │
-│            Counter-narrative: [Ready in 4 languages]    │
-└─────────────────────────────────────────────────────────┘
-                │
-                ▼
-One-click deploy to 800+ community leaders via Telegram
-```
+
+<p align="center">
+  <img src="public/screenshots/02-dashboard-input.png" alt="Dashboard Input" width="100%" />
+</p>
 
 ---
 
@@ -78,39 +74,32 @@ We have a decade of POFMA notices, MOH corrections, and CNA fact-checks that pro
 
 ## Architecture
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                     FRONTEND (Next.js)                       │
-│  Dashboard: paste announcement → view predictions → deploy  │
-│  Real-time SSE streaming for progressive UI updates         │
-└────────────────────────┬─────────────────────────────────────┘
-                         │ POST /api/analyze (SSE stream)
-                         ▼
-┌──────────────────────────────────────────────────────────────┐
-│                   ANALYSIS PIPELINE                          │
-│                                                              │
-│  Step 1: Extract Topics ──→ Gemini 2.5 Flash (JSON schema)  │
-│          ├─ Topics, affected communities                     │
-│          ├─ Emotional triggers                               │
-│          └─ Search queries for retrieval                     │
-│                                                              │
-│  Step 2: Retrieve Sources (parallel)                         │
-│          ├─ Firecrawl ──→ Live web search (POFMA, CNA, MOH) │
-│          └─ ClickHouse RAG ──→ Historical article vectors    │
-│                                                              │
-│  Step 3: Analyze & Predict ──→ Gemini 2.5 Flash             │
-│          ├─ Cross-references RAG + live sources              │
-│          ├─ Generates 3-8 rumour predictions                 │
-│          ├─ Risk scores (0-100) + risk levels                │
-│          └─ Counter-narratives in EN/ZH/MS/TA               │
-└──────────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-┌──────────────────────────────────────────────────────────────┐
-│                   DEPLOYMENT (Telegram)                      │
-│  POST /api/telegram → sends counter-narratives to           │
-│  community leader channels (chunked, 4 languages)           │
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Frontend["Frontend · Next.js + React 19"]
+        UI["Dashboard UI\nSSE real-time updates"]
+    end
+
+    UI -->|"POST /api/analyze\n(SSE stream)"| Pipeline
+
+    subgraph Pipeline["Analysis Pipeline"]
+        S1["Step 1 · Extract Topics\nGemini 2.5 Flash"] --> S2
+        subgraph S2["Step 2 · Retrieve Sources (parallel)"]
+            FC["Firecrawl\nPOFMA, CNA, MOH"]
+            CH["ClickHouse RAG\nHistorical vectors"]
+        end
+        S2 --> S3["Step 3 · Analyze & Predict\nGemini 2.5 Flash"]
+    end
+
+    S3 --> Deploy
+
+    subgraph Deploy["Deployment"]
+        TG["Telegram Bot API\nCounter-narratives in 4 languages"]
+    end
+
+    style Frontend fill:#1e1b4b,stroke:#6366f1,color:#c7d2fe
+    style Pipeline fill:#172554,stroke:#3b82f6,color:#bfdbfe
+    style Deploy fill:#14532d,stroke:#22c55e,color:#bbf7d0
 ```
 
 ---
@@ -128,6 +117,19 @@ Two retrieval paths run concurrently:
 - **Firecrawl** scrapes live authoritative sources (pofmaoffice.gov.sg, channelnewsasia.com, moh.gov.sg) — up to 15 sources
 - **ClickHouse RAG** performs hybrid search: topic-filtered vector search (Phase 1) + pure cosine similarity (Phase 2) over a corpus of embedded historical articles with credibility scores
 
+<table>
+<tr>
+<td width="50%">
+<img src="public/screenshots/03-processing.png" alt="Processing Animation" width="100%" />
+<p align="center"><em>Real-time processing with SSE streaming</em></p>
+</td>
+<td width="50%">
+<img src="public/screenshots/04-results.png" alt="Results Page" width="100%" />
+<p align="center"><em>Predicted false narratives ranked by risk</em></p>
+</td>
+</tr>
+</table>
+
 ### 4. Rumour Prediction
 All context — announcement, RAG sources (credibility-weighted), live sources, extracted topics — feeds into Gemini 2.5 Flash, which generates:
 - **Historical pattern matches** with similarity scores
@@ -137,14 +139,23 @@ All context — announcement, RAG sources (credibility-weighted), live sources, 
   - Pre-written counter-narratives in **English, Mandarin, Bahasa Melayu, and Tamil**
   - Policy recommendations and supporting sources
 
-### 5. One-Click Deployment
-Counter-narratives are sent to Telegram community leader channels with a single click — reaching RC chairmen, mosque administrators, and grassroots leaders before the rumours surface.
-
 ---
 
 ## RAG Implementation
 
 ContextGuard uses a **hybrid RAG** approach combining topic filtering with vector similarity:
+
+```mermaid
+flowchart LR
+    A["📄 Announcement Text"] --> B["Gemini Embedding\n768-dim vector"]
+    B --> C["Phase 1 · Topic Filter\nhasAny + cosine"]
+    B --> D["Phase 2 · Pure Vector\ncosineDistance"]
+    C & D --> E["Dedup & Merge\nTopic-matched first"]
+    E --> F["Credibility-weighted\nRAG Sources"]
+
+    style A fill:#1e1b4b,stroke:#6366f1,color:#c7d2fe
+    style F fill:#14532d,stroke:#22c55e,color:#bbf7d0
+```
 
 ```sql
 -- ClickHouse article_embeddings table
@@ -162,6 +173,12 @@ CREATE TABLE article_embeddings (
 - **Credibility weighting**: Government sources (0.95) prioritized for counter-narratives; forum posts (0.50-0.70) used to understand actual rumour language
 
 The corpus includes POFMA correction orders, MOH advisories, CNA fact-checks, and community forum discussions — a Singapore-specific misinformation knowledge base that grows with every new crisis.
+
+<p align="center">
+  <img src="public/screenshots/05-rumour-expanded.png" alt="Expanded Rumour Card" width="100%" />
+  <br />
+  <em>Expanded rumour card with counter-narratives in 4 languages</em>
+</p>
 
 ---
 
