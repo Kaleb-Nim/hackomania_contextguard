@@ -25,18 +25,12 @@ export interface HistoricalPattern {
   similarity: number;
 }
 
-export interface AnalyzeStep {
-  label: string;
-  icon: string;
-}
-
 export interface DemoScenario {
   id: string;
   title: string;
   subtitle: string;
   date: string;
   announcementText: string;
-  analyzeSteps: AnalyzeStep[];
   predictions: RumourPrediction[];
   historicalPatterns: HistoricalPattern[];
   communityLeadersCount: number;
@@ -119,17 +113,6 @@ The Disease Outbreak Response System Condition (DORSCON) level has been raised f
 Members of the public are advised to continue practising good personal hygiene. There is no need to panic-buy essential supplies. Singapore has sufficient national stockpiles.
 
 \u2014 Ministry of Health, Singapore`,
-  analyzeSteps: [
-    { label: "Classifying announcement topic & context", icon: "\u{1F50D}" },
-    { label: "Identifying affected language communities", icon: "\u{1F30F}" },
-    { label: "Scanning emotional risk vectors", icon: "\u26A1" },
-    {
-      label: "Matching against SG rumour corpus (1,247 historical patterns)",
-      icon: "\u{1F9E0}",
-    },
-    { label: "Generating multilingual counter-narratives", icon: "\u{1F4DD}" },
-    { label: "Calibrating virality risk scores", icon: "\u{1F4CA}" },
-  ],
   historicalPatterns: [
     { event: "DORSCON Orange Upgrade (Feb 2020)", similarity: 94 },
     { event: "Circuit Breaker Announcement (Apr 2020)", similarity: 87 },

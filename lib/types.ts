@@ -2,7 +2,6 @@ export type {
   RiskLevel,
   RumourPrediction,
   HistoricalPattern,
-  AnalyzeStep,
   DemoScenario,
   Language,
 } from "@/data/demo-scenario";

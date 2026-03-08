@@ -14,6 +14,7 @@ import {
   type RumourPrediction,
   type HistoricalPattern,
 } from "@/data/demo-scenario";
+import type { StepStatus, TopicsData } from "@/components/ProcessingAnimation";
 import type { AnalyzeResponse } from "@/lib/types";
 
 const AnnouncementInput = dynamic(
@@ -47,6 +48,12 @@ export default function DashboardPage() {
     DEMO_SCENARIO.constituencies
   );
   const [displaySources, setDisplaySources] = useState<{ label: string; url: string }[]>([]);
+  const [stepStatuses, setStepStatuses] = useState<Record<string, StepStatus>>({
+    topics: "pending",
+    sources: "pending",
+    analyze: "pending",
+  });
+  const [topicsData, setTopicsData] = useState<TopicsData | null>(null);
 
   // Refs for syncing API response with animation
   const apiResultRef = useRef<AnalyzeResponse | null>(null);
@@ -81,6 +88,8 @@ export default function DashboardPage() {
   const handleAnalyse = useCallback(() => {
     setStep("analyzing");
     setDisplaySources([]);
+    setTopicsData(null);
+    setStepStatuses({ topics: "pending", sources: "pending", analyze: "pending" });
     apiResultRef.current = null;
     animationDoneRef.current = false;
     setIsWaitingForApi(false);
@@ -112,7 +121,12 @@ export default function DashboardPage() {
               currentEvent = line.slice(7);
             } else if (line.startsWith("data: ")) {
               const data = JSON.parse(line.slice(6));
-              if (currentEvent === "source") {
+              if (currentEvent === "step") {
+                setStepStatuses((prev) => ({ ...prev, [data.id]: data.status }));
+                if (data.id === "topics" && data.status === "done" && data.data) {
+                  setTopicsData(data.data as TopicsData);
+                }
+              } else if (currentEvent === "source") {
                 setDisplaySources((prev) => [...prev, { label: data.label, url: data.url }]);
               } else if (currentEvent === "result") {
                 const result = data as AnalyzeResponse;
@@ -163,6 +177,8 @@ export default function DashboardPage() {
     setCommunityLeadersCount(DEMO_SCENARIO.communityLeadersCount);
     setConstituencies(DEMO_SCENARIO.constituencies);
     setDisplaySources([]);
+    setTopicsData(null);
+    setStepStatuses({ topics: "pending", sources: "pending", analyze: "pending" });
     apiResultRef.current = null;
     animationDoneRef.current = false;
     setIsWaitingForApi(false);
@@ -212,8 +228,9 @@ export default function DashboardPage() {
         {/* Analyzing phase */}
         {step === "analyzing" && (
           <ProcessingAnimation
-            steps={DEMO_SCENARIO.analyzeSteps}
+            stepStatuses={stepStatuses}
             sources={displaySources}
+            topicsData={topicsData}
             onComplete={handleProcessingComplete}
             isWaiting={isWaitingForApi}
           />
