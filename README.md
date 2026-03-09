@@ -1,7 +1,7 @@
 # ContextGuard
 
 <p align="center">
-    <img src="public/hackerthon_winner.jpeg" alt="Hackathon Winner" width="60%" />
+    <img src="public/screenshots/hackerthon_winner.jpeg" alt="Hackathon Winner" width="60%" />
   </a>
   <br/>
   <em>🏆 <a href="https://hackomania.geekshacking.com/" target="_blank">HackOMania Winner</a> ahrefs— ContextGuard</em>
