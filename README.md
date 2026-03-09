@@ -1,5 +1,13 @@
 # ContextGuard
 
+<p align="center">
+    <img src="public/hackerthon_winner.jpeg" alt="Hackathon Winner" width="60%" />
+  </a>
+  <br/>
+  <em>🏆 <a href="https://hackomania.geekshacking.com/" target="_blank">HackOMania Winner</a> ahrefs— ContextGuard</em>
+</p>
+
+
 ### AI-Powered Rumour Pre-Mortem Engine for Singapore
 
 > **HackOMania Problem Statement:** How might we design AI-powered solutions that help local and multilingual communities in Singapore assess information credibility, understand context, and make informed decisions — especially during times of uncertainty?
