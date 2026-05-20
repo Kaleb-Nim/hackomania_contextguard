@@ -33,7 +33,11 @@ export async function extractTopics(text: string): Promise<TopicExtraction> {
 
     const content = message.content[0];
     if (content.type === "text") {
-      return JSON.parse(content.text) as TopicExtraction;
+      let jsonText = content.text.trim();
+      if (jsonText.startsWith("```")) {
+        jsonText = jsonText.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+      }
+      return JSON.parse(jsonText) as TopicExtraction;
     }
   } catch (error) {
     console.error("Anthropic extractTopics failed, falling back to Gemini:", error);
